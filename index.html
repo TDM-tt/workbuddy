@@ -346,6 +346,9 @@ body {
 .btn-sm { padding: 6px 14px; font-size: 12px; }
 .btn-xs { padding: 4px 10px; font-size: 11px; }
 .btn-block { width: 100%; justify-content: center; }
+.btn-ghost { background: rgba(255,255,255,0.6); color: var(--accent); border: 1.5px dashed var(--pink-300); }
+.btn-ghost:hover { background: #fff; border-color: var(--accent); }
+.closet-toggle { transition: all 0.2s; }
 
 /* ==================== 输入控件 ==================== */
 .input, .select, .textarea {
@@ -1226,9 +1229,13 @@ function renderWardrobe(){
   else renderTemplates();
 }
 
+let wardrobeExpanded=false;          // 电子衣架是否展开全部
+let currentClosetItems=[];            // 当前衣架列表（用于折叠/展开切换）
 function renderCloset(){
   const container=document.getElementById('wardrobeContent');
   const items=AppData.wardrobe.filter(w=>!w.archived);
+  wardrobeExpanded=false;             // 进入衣架默认折叠，只显示最新3件
+  currentClosetItems=items;
   container.innerHTML=`
     <div class="cute-card">
       <div class="cute-card-header">
@@ -1267,8 +1274,12 @@ function renderWardrobeGrid(items){
     grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">👔</div><p>衣架空空如也~<br>点击"AI批量导入"开始整理吧！</p></div>`;
     return;
   }
+  // 最新在前：按 createdAt 倒序，无日期的保持原数组顺序（默认在最后）
+  const sorted=[...items].sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+  const showCount=wardrobeExpanded?sorted.length:Math.min(3,sorted.length);
+  const visible=sorted.slice(0,showCount);
   const catIcons={'T恤':'👚','衬衫':'👔','毛衣':'🧶','卫衣':'🧥','外套':'🧥','风衣':'🧥','大衣':'🧥','夹克':'🧥','半身裙':'👗','连衣裙':'👗','长裤':'👖','短裤':'🩳','运动装':'🎽','内衣配饰':'👙','上衣':'👚'};
-  grid.innerHTML=items.map(item=>{
+  grid.innerHTML=visible.map(item=>{
     const placeholder=catIcons[item.category]||'👕';
     return `<div class="clothing-item" onclick="viewClothing('${item.id}')" data-id="${item.id}">
       <div class="cl-img-placeholder" id="clph-${item.id}" style="width:100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:14px;font-size:48px;">${placeholder}</div>
@@ -1276,9 +1287,9 @@ function renderWardrobeGrid(items){
       <div class="cl-name">${escapeHtml(item.name)}</div>
       <div class="cl-cat">🏷️ ${item.category||'未分类'} · ${item.season||'?'}季</div>
     </div>`;
-  }).join('');
+  }).join('') + (items.length>3?`<button class="btn btn-ghost btn-block closet-toggle" style="grid-column:1/-1;margin-top:6px;" onclick="toggleClosetExpand()">${wardrobeExpanded?`收起 · 仅看最新3件 ▲`:`展开全部 ${items.length} 件 ▼`}</button>`:'');
   // 异步加载 IndexedDB 图片
-  items.forEach(async item=>{
+  visible.forEach(async item=>{
     const src=await getClothingImageSrc(item);
     if(src){
       const img=document.getElementById(`climg-${item.id}`);
@@ -1287,10 +1298,16 @@ function renderWardrobeGrid(items){
     }
   });
 }
+function toggleClosetExpand(){
+  wardrobeExpanded=!wardrobeExpanded;
+  renderWardrobeGrid(currentClosetItems);
+}
 function filterCloset(cat,season){
   let items=AppData.wardrobe.filter(w=>!w.archived);
   if(cat)items=items.filter(i=>i.category===cat);
   if(season)items=items.filter(i=>i.season===season);
+  wardrobeExpanded=true;          // 筛选/搜索时直接展开全部结果
+  currentClosetItems=items;
   renderWardrobeGrid(items);
 }
 
