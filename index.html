@@ -1942,7 +1942,7 @@ function renderMilkTea(){
         <button class="btn btn-outline btn-sm" onclick="clearMilkTeaHistory()">🗑️ 清空历史</button>
       </div>
     </div>
-    <div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">抽取历史</span><span class="badge-pill">${AppData.milkTeaHistory.length}次</span></div>${history.length===0?'<div class="empty-state"><div class="empty-icon">📜</div><p>还没有记录哦~</p></div>':history.map(h=>`<div class="list-item"><div class="item-info"><div class="item-title">🧋 ${h.brand?`<span style="color:var(--accent);font-size:11px;">[${escapeHtml(h.brand)}]</span> `:''}${escapeHtml(h.name)}</div><div class="item-meta">${escapeHtml(h.sweetness)} · ${escapeHtml(h.ice)} · ${escapeHtml(h.topping)} · ${escapeHtml(h.date)}</div></div></div>`).join('')}</div>`;
+    <div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">抽取历史</span><span class="badge-pill">${AppData.milkTeaHistory.length}次</span></div>${history.length===0?'<div class="empty-state"><div class="empty-icon">📜</div><p>还没有记录哦~</p></div>':history.map(h=>`<div class="list-item"><div style="width:40px;height:40px;border-radius:10px;overflow:hidden;flex-shrink:0;${h.image?'':'background:#fff0f5;display:flex;align-items:center;justify-content:center;font-size:20px;'}">${h.image?`<img src="${h.image}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`:'🧋'}</div><div class="item-info"><div class="item-title">🧋 ${h.brand?`<span style="color:var(--accent);font-size:11px;">[${escapeHtml(h.brand)}]</span> `:''}${escapeHtml(h.name)}</div><div class="item-meta">${escapeHtml(h.sweetness)} · ${escapeHtml(h.ice)} · ${escapeHtml(h.topping)} · ${escapeHtml(h.date)}</div></div></div>`).join('')}</div>`;
 
   if(_mtDeviceMotionHandler){window.removeEventListener('devicemotion',_mtDeviceMotionHandler);}
   if(window.DeviceMotionEvent){
@@ -1972,10 +1972,11 @@ function _doShake(resultEl){
   const sweetness=pick.sweetness||sw[Math.floor(Math.random()*sw.length)];
   const ice=pick.ice||ic[Math.floor(Math.random()*ic.length)];
   const topping=pick.topping||tp[Math.floor(Math.random()*tp.length)];
-  AppData.milkTeaHistory.push({id:genId(),date:today(),brand:pick.brand||'',name:pick.name,sweetness,ice,topping});
+  AppData.milkTeaHistory.push({id:genId(),date:today(),brand:pick.brand||'',name:pick.name,sweetness,ice,topping,image:pick.image||''});
   saveData(AppData);
   const brandBadge=pick.brand?`<span class="badge-pill" style="background:var(--accent);color:white;">${escapeHtml(pick.brand)}</span>`:'';
-  const resultHTML=`<div class="bounceIn" style="animation:bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1);"><div style="font-size:54px;margin-bottom:4px;">🧋</div><div style="margin-bottom:4px;">${brandBadge}</div><div style="font-size:22px;font-weight:800;color:var(--accent);margin:6px 0;">${escapeHtml(pick.name)}</div><div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px;"><span class="badge-rose">🍬 ${sweetness}</span><span class="badge-info">🧊 ${ice}</span><span class="badge-warning">🧋 ${topping}</span></div></div>`;
+  const pickImg=pick.image?`<img src="${pick.image}" style="width:90px;height:90px;object-fit:cover;border-radius:18px;border:2px solid var(--pink-200);margin:0 auto 4px;" onerror="this.style.display='none'">`:`<div style="font-size:54px;margin-bottom:4px;">🧋</div>`;
+  const resultHTML=`<div class="bounceIn" style="animation:bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1);">${pickImg}<div style="margin-bottom:4px;">${brandBadge}</div><div style="font-size:22px;font-weight:800;color:var(--accent);margin:6px 0;">${escapeHtml(pick.name)}</div><div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px;"><span class="badge-rose">🍬 ${sweetness}</span><span class="badge-info">🧊 ${ice}</span><span class="badge-warning">🧋 ${topping}</span></div></div>`;
   resultEl.innerHTML=resultHTML;
   const container=document.getElementById('dietContent');
   if(container)container.dataset.lastMilkTeaResult=resultHTML;
@@ -1983,18 +1984,71 @@ function _doShake(resultEl){
   const hist=AppData.milkTeaHistory.slice().reverse().slice(0,10);
   const lastCard=document.querySelectorAll('#dietContent .cute-card')[1];
   if(lastCard){
-    lastCard.innerHTML=`<div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">抽取历史</span><span class="badge-pill">${AppData.milkTeaHistory.length}次</span></div>${hist.map(h=>`<div class="list-item"><div class="item-info"><div class="item-title">🧋 ${escapeHtml(h.name)}</div><div class="item-meta">${escapeHtml(h.sweetness)} · ${escapeHtml(h.ice)} · ${escapeHtml(h.topping)} · ${escapeHtml(h.date)}</div></div></div>`).join('')}`;
+    lastCard.innerHTML=`<div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">抽取历史</span><span class="badge-pill">${AppData.milkTeaHistory.length}次</span></div>${hist.map(h=>`<div class="list-item"><div style="width:40px;height:40px;border-radius:10px;overflow:hidden;flex-shrink:0;${h.image?'':'background:#fff0f5;display:flex;align-items:center;justify-content:center;font-size:20px;'}">${h.image?`<img src="${h.image}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`:'🧋'}</div><div class="item-info"><div class="item-title">🧋 ${escapeHtml(h.name)}</div><div class="item-meta">${escapeHtml(h.sweetness)} · ${escapeHtml(h.ice)} · ${escapeHtml(h.topping)} · ${escapeHtml(h.date)}</div></div></div>`).join('')}`;
   }
 }
 function manageMilkTeaMenu(){
-  const rows=AppData.milkTeaMenu.map((m,i)=>`<div class="list-item"><div class="item-info"><div class="item-title">${m.brand?`<span style="color:var(--accent);font-size:11px;">[${escapeHtml(m.brand)}]</span> `:''}${escapeHtml(m.name)}</div><div class="item-meta">${m.sweetness} · ${m.ice} · ${m.topping||'无'}</div></div><button class="btn btn-danger btn-xs" onclick="removeMilkTeaItem(${i});document.querySelector('.modal-overlay')?.remove();manageMilkTeaMenu();">删除</button></div>`).join('');
-  showModal('📝 管理奶茶菜单',`<div style="max-height:280px;overflow-y:auto;margin-bottom:12px;">${rows||'<p style="color:var(--text-light);">菜单为空</p>'}</div><div class="form-row"><div class="form-group"><input class="input" id="mtBrand" placeholder="品牌(如:喜茶)"></div><div class="form-group"><input class="input" id="mtName" placeholder="奶茶名称"></div></div><div class="form-row"><div class="form-group"><select class="select" id="mtSweet"><option value="">随机</option><option>无糖</option><option>微糖</option><option>三分糖</option><option>半糖</option><option>少糖</option></select></div><div class="form-group"><select class="select" id="mtIce"><option value="">随机</option><option>去冰</option><option>少冰</option><option>常温</option><option>热</option></select></div><div class="form-group"><input class="input" id="mtTopping" placeholder="配料"></div></div>`,(overlay)=>{
-    const name=overlay.querySelector('#mtName').value.trim();if(!name){showToast('请输入名称','error');return false;}
-    AppData.milkTeaMenu.push({brand:overlay.querySelector('#mtBrand').value.trim(),name,sweetness:overlay.querySelector('#mtSweet').value,ice:overlay.querySelector('#mtIce').value,topping:overlay.querySelector('#mtTopping').value});
-    saveData(AppData);renderMilkTea();showToast('✨ 已添加');
-  });
+  const rows=AppData.milkTeaMenu.map((m,i)=>`<div class="list-item">
+    ${m.image?`<img src="${m.image}" style="width:42px;height:42px;object-fit:cover;border-radius:10px;border:1px solid var(--pink-200);flex-shrink:0;">`:`<div style="width:42px;height:42px;border-radius:10px;background:#fff0f5;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🧋</div>`}
+    <div class="item-info"><div class="item-title">${m.brand?`<span style="color:var(--accent);font-size:11px;">[${escapeHtml(m.brand)}]</span> `:''}${escapeHtml(m.name)}</div><div class="item-meta">${m.sweetness||'随机'} · ${m.ice||'随机'} · ${m.topping||'无'}</div></div>
+    <div style="display:flex;gap:6px;">
+      <button class="btn btn-outline btn-xs" onclick="mtItemForm(${i})">编辑</button>
+      <button class="btn btn-danger btn-xs" onclick="removeMilkTeaItem(${i})">删除</button>
+    </div>
+  </div>`).join('');
+  showModal('📝 管理奶茶菜单',`
+    <div style="max-height:300px;overflow-y:auto;margin-bottom:12px;">${rows||'<p style="color:var(--text-light);">菜单为空</p>'}</div>
+    <button class="btn btn-pink btn-block" onclick="mtItemForm(null)">➕ 新增奶茶</button>
+  `,()=>true);
 }
-function removeMilkTeaItem(i){AppData.milkTeaMenu.splice(i,1);saveData(AppData);renderMilkTea();showToast('已删除');}
+function mtItemForm(idx){
+  const m=idx!=null?AppData.milkTeaMenu[idx]:null;
+  const content=`
+    <div class="upload-zone" id="mtUploadZone" style="margin-bottom:12px;padding:16px;">
+      <div style="font-size:30px;">📸</div>
+      <div style="font-weight:600;margin-top:4px;">上传奶茶图片</div>
+      <div style="font-size:11px;color:var(--text-light);">点击选择，可选</div>
+    </div>
+    <input type="file" id="mtImgInput" accept="image/*" style="display:none;">
+    <div id="mtImgPreview" style="display:${m&&m.image?'block':'none'};text-align:center;margin-bottom:10px;">
+      <img id="mtImgShow" src="${m&&m.image?m.image:''}" style="max-width:120px;max-height:120px;border-radius:12px;border:2px solid var(--pink-200);">
+      <div><button type="button" class="btn btn-ghost btn-xs" id="mtImgClear" style="margin-top:4px;">移除图片</button></div>
+    </div>
+    <div class="form-row"><div class="form-group"><label>🏷️ 品牌</label><input class="input" id="mtBrand" value="${m?escapeHtml(m.brand||''):''}" placeholder="如:喜茶"></div>
+    <div class="form-group"><label>🧋 名称</label><input class="input" id="mtName" value="${m?escapeHtml(m.name||''):''}" placeholder="奶茶名称"></div></div>
+    <div class="form-row"><div class="form-group"><label>🍬 甜度</label><select class="select" id="mtSweet"><option value="">随机</option>${['无糖','微糖','三分糖','半糖','少糖','七分糖','全糖'].map(s=>`<option ${m&&m.sweetness===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div class="form-group"><label>🧊 冰量</label><select class="select" id="mtIce"><option value="">随机</option>${['去冰','少冰','正常冰','常温','热'].map(s=>`<option ${m&&m.ice===s?'selected':''}>${s}</option>`).join('')}</select></div></div>
+    <div class="form-group"><label>🍡 配料</label><input class="input" id="mtTopping" value="${m?escapeHtml(m.topping||''):''}" placeholder="如:珍珠"></div>`;
+  showModal(idx!=null?'✏️ 编辑奶茶':'➕ 新增奶茶',content,(overlay)=>{
+    const name=overlay.querySelector('#mtName').value.trim();
+    if(!name){showToast('请输入名称','error');return false;}
+    const data={brand:overlay.querySelector('#mtBrand').value.trim(),name,sweetness:overlay.querySelector('#mtSweet').value,ice:overlay.querySelector('#mtIce').value,topping:overlay.querySelector('#mtTopping').value,image:overlay._mtImage||''};
+    if(idx!=null)AppData.milkTeaMenu[idx]=data;else AppData.milkTeaMenu.push(data);
+    saveData(AppData);renderMilkTea();showToast(idx!=null?'✅ 已更新':'✨ 已添加');
+    document.querySelectorAll('.modal-overlay').forEach(o=>o.remove());
+    setTimeout(manageMilkTeaMenu,0);
+  });
+  const overlay=document.querySelector('.modal-overlay');
+  if(overlay)overlay._mtImage=(m&&m.image)||'';
+  setTimeout(()=>{
+    const zone=document.getElementById('mtUploadZone');
+    const input=document.getElementById('mtImgInput');
+    const preview=document.getElementById('mtImgPreview');
+    const show=document.getElementById('mtImgShow');
+    const clear=document.getElementById('mtImgClear');
+    if(!zone||!input)return;
+    zone.onclick=()=>input.click();
+    input.onchange=async e=>{
+      const file=e.target.files[0];if(!file)return;
+      const dataUrl=await compressImage(file,300,0.6);
+      if(overlay)overlay._mtImage=dataUrl;
+      show.src=dataUrl;preview.style.display='block';
+      zone.innerHTML='<div style="font-size:22px;">✅</div><div style="font-size:12px;">已上传，可点击重新选择</div>';
+    };
+    if(clear)clear.onclick=()=>{if(overlay)overlay._mtImage='';show.src='';preview.style.display='none';zone.innerHTML='<div style="font-size:30px;">📸</div><div style="font-weight:600;margin-top:4px;">上传奶茶图片</div><div style="font-size:11px;color:var(--text-light);">点击选择，可选</div>';};
+  },80);
+}
+function removeMilkTeaItem(i){AppData.milkTeaMenu.splice(i,1);saveData(AppData);renderMilkTea();document.querySelector('.modal-overlay')?.remove();manageMilkTeaMenu();showToast('已删除');}
 function clearMilkTeaHistory(){if(confirm('清空历史？')){AppData.milkTeaHistory=[];saveData(AppData);renderMilkTea();showToast('✨ 已清空');}}
 </script>
 
