@@ -962,13 +962,13 @@ const AI_RULES=[
   // 上装
   {patterns:['t恤','tshirt','tee','短袖','t-shirt','polo衫','polo'],category:'T恤',season:'夏',icon:'👚'},
   {patterns:['衬衫','shirt','衬衣','blouse','雪纺衫'],category:'衬衫',season:'春秋',icon:'👔'},
-  {patterns:['毛衣','sweater','针织','knit','羊毛衫','羊绒','pullover'],category:'毛衣',season:'秋冬',icon:'🧶'},
+  {patterns:['毛衣','sweater','针织','针织衫','knit','羊毛衫','羊绒','pullover'],category:'毛衣',season:'秋冬',icon:'🧶'},
   {patterns:['卫衣','hoodie','sweatshirt','帽衫','连帽'],category:'卫衣',season:'秋冬',icon:'🧥'},
   {patterns:['吊带','背心','camisole','tank','抹胸'],category:'背心吊带',season:'夏',icon:'🎽'},
   // 外套
   {patterns:['风衣','trench','windbreaker','呢子风衣'],category:'风衣',season:'春秋',icon:'🧥'},
   {patterns:['大衣','coat','overcoat','毛呢','呢大衣','羊毛大衣'],category:'大衣',season:'冬',icon:'🧥'},
-  {patterns:['夹克','jacket','皮衣','leather','机车','牛仔外套','denim jacket'],category:'夹克',season:'春秋',icon:'🧥'},
+  {patterns:['夹克','jacket','皮衣','leather','机车','外套','牛仔外套','denim jacket'],category:'夹克',season:'春秋',icon:'🧥'},
   {patterns:['羽绒','down','棉服','羽绒服','puffer','棉衣'],category:'羽绒服',season:'冬',icon:'🧥'},
   {patterns:['西装','suit','blazer','西服','正装'],category:'西装',season:'春秋',icon:'🤵'},
   {patterns:['开衫','cardigan','针织开衫','披肩'],category:'开衫',season:'春秋',icon:'🧶'},
@@ -978,7 +978,7 @@ const AI_RULES=[
   {patterns:['半身裙','skirt','短裙','a字裙','百褶裙','包臀裙','伞裙'],category:'半身裙',season:'夏',icon:'👗'},
   {patterns:['牛仔','jeans','牛仔裤'],category:'牛仔裤',season:'春秋',icon:'👖'},
   {patterns:['短裤','shorts','热裤','五分裤','三分裤'],category:'短裤',season:'夏',icon:'🩳'},
-  {patterns:['阔腿裤','直筒裤','休闲裤','pants','西裤','烟管裤','锥形裤'],category:'长裤',season:'春秋',icon:'👖'},
+  {patterns:['阔腿裤','直筒裤','休闲裤','pants','西裤','烟管裤','锥形裤','裤子'],category:'长裤',season:'春秋',icon:'👖'},
   {patterns:['打底裤','legging','瑜伽裤','紧身裤'],category:'打底裤',season:'春秋',icon:'👖'},
   // 特殊
   {patterns:['运动','sport','健身','瑜伽','gym','athletic'],category:'运动装',season:'夏',icon:'🎽'},
@@ -1013,9 +1013,18 @@ const COLOR_STYLE=[
   {colors:['格子','check','plaid'],style:'学院复古'},
   {colors:['碎花','floral','印花'],style:'甜美田园'},
 ];
+function seasonToArr(s){
+  if(Array.isArray(s))return s.filter(x=>['春','夏','秋','冬'].includes(x));
+  if(!s)return [];
+  const m={'春秋':['春','秋'],'春夏':['春','夏'],'夏秋':['夏','秋'],'秋冬':['秋','冬'],'四季':['春','夏','秋','冬'],'全季':['春','夏','秋','冬']};
+  if(m[s])return m[s];
+  if(['春','夏','秋','冬'].includes(s))return [s];
+  return [];
+}
+function seasonDisplay(s){ if(Array.isArray(s))return s.join('/'); if(!s)return '?'; return s; }
 function aiRecognize(fileName){
   const lo=fileName.toLowerCase().replace(/\.[^.]+$/,'');
-  let cat='上衣',season='春秋',style='简约基础',conf=55,material='',brand='';
+  let cat='',season=[],style='简约基础',conf=55,material='',brand='';
   let best=null,score=0,matchedPatterns=[];
 
   // 1. 品类匹配（支持多特征累加置信度）
@@ -1028,7 +1037,7 @@ function aiRecognize(fileName){
     }
   }
   if(best){
-    cat=best.category;season=best.season;
+    cat=best.category;season=seasonToArr(best.season);
     conf=Math.min(92,60+score*4+Math.min(matchedPatterns.length-1,3)*5);
   }
 
@@ -1294,7 +1303,7 @@ function renderWardrobeGrid(items){
       <div class="cl-img-placeholder" id="clph-${item.id}" style="width:100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:14px;font-size:48px;">${placeholder}</div>
       <img class="cl-img" id="climg-${item.id}" style="display:none;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;" alt="${escapeHtml(item.name)}" loading="lazy">
       <div class="cl-name">${escapeHtml(item.name)}</div>
-      <div class="cl-cat">🏷️ ${item.category||'未分类'} · ${item.season||'?'}季</div>
+      <div class="cl-cat">🏷️ ${item.category||'未分类'} · ${seasonDisplay(item.season)}季</div>
     </div>`;
   }).join('') + (items.length>3?`<button class="btn btn-ghost btn-block closet-toggle" style="grid-column:1/-1;margin-top:6px;" onclick="toggleClosetExpand()">${wardrobeExpanded?`收起 · 仅看最新3件 ▲`:`展开全部 ${items.length} 件 ▼`}</button>`:'');
   // 异步加载 IndexedDB 图片
@@ -1314,7 +1323,7 @@ function toggleClosetExpand(){
 function filterCloset(cat,season){
   let items=AppData.wardrobe.filter(w=>!w.archived);
   if(cat)items=items.filter(i=>i.category===cat);
-  if(season)items=items.filter(i=>i.season===season);
+  if(season)items=items.filter(i=>Array.isArray(i.season)?i.season.includes(season):i.season===season);
   wardrobeExpanded=true;          // 筛选/搜索时直接展开全部结果
   currentClosetItems=items;
   renderWardrobeGrid(items);
@@ -1337,7 +1346,7 @@ function batchUploadClothing(){
       const id=genId();
       const imageId='img_'+id;
       await saveImage(imageId, item.image);
-      AppData.wardrobe.push({id,name:item.name,category:item.category,season:item.season,style:item.style,note:item.note||'',imageId,image:item.image||'',archived:false,createdAt:today()});
+      AppData.wardrobe.push({id,name:item.name,category:item.category||'上衣',season:item.season||[],style:item.style,note:item.note||'',imageId,image:item.image||'',archived:false,createdAt:today()});
     }
     saveData(AppData);cloudSaveForce();renderWardrobe();showToast(`✨ AI已识别并导入 ${pendingBatchItems.length} 件衣物！`);
   },{wide:true,confirmText:`💾 全部导入 (${pendingBatchItems.length}件)`});
@@ -1369,8 +1378,8 @@ async function handleBatchFiles(files){
     <div class="ai-result-row">
       <img src="${item.image}">
       <div class="info"><div class="name">${escapeHtml(item.name)}</div><div class="conf">🤖 置信度 ${item.confidence}%</div></div>
-      <select class="select" style="width:auto;min-width:80px;" onchange="pendingBatchItems[${idx}].category=this.value">${cats.map(c=>`<option ${item.category===c?'selected':''}>${c}</option>`).join('')}</select>
-      <select class="select" style="width:auto;min-width:60px;" onchange="pendingBatchItems[${idx}].season=this.value">${seasons.map(s=>`<option ${item.season===s?'selected':''}>${s}季</option>`).join('')}</select>
+      <select class="select" style="width:auto;min-width:80px;" onchange="pendingBatchItems[${idx}].category=this.value"><option value="${item.category||''}" ${item.category?'':'selected'}>🤖未识别</option>${cats.map(c=>`<option ${item.category===c?'selected':''}>${c}</option>`).join('')}</select>
+      <span id="bs_${idx}" style="display:inline-flex;gap:2px;flex-wrap:wrap;">${['春','夏','秋','冬'].map(s=>`<label style="font-size:11px;margin-right:3px;cursor:pointer;"><input type="checkbox" value="${s}" ${(item.season||[]).includes(s)?'checked':''} onchange="pendingBatchItems[${idx}].season=[...document.querySelectorAll('#bs_${idx} input:checked')].map(c=>c.value)">${s}</label>`).join('')}</span>
       <input class="input" style="width:auto;min-width:100px;" value="${escapeHtml(item.name)}" onchange="pendingBatchItems[${idx}].name=this.value">
       <button class="btn btn-danger btn-xs" onclick="pendingBatchItems.splice(${idx},1);this.closest('.ai-result-row').remove();updateBatchCount()">✕</button>
     </div>`).join('')}`;
@@ -1383,7 +1392,7 @@ function updateBatchCount(){
 
 function addClothing(){
   const cats=['上衣','T恤','衬衫','毛衣','卫衣','背心吊带','风衣','大衣','夹克','羽绒服','西装','开衫','防晒衣','半身裙','连衣裙','牛仔裤','长裤','短裤','打底裤','运动装','内衣家居','泳衣','特色服饰'];
-  showModal('➕ 手动添加衣物',`<div class="form-group"><label>📛 名称</label><input class="input" id="newClName" placeholder="如：白色简约衬衫"></div><div class="form-row"><div class="form-group"><label>🏷️ 品类</label><select class="select" id="newClCat">${cats.map(c=>`<option>${c}</option>`).join('')}</select></div><div class="form-group"><label>🍂 季节</label><select class="select" id="newClSeason"><option>春</option><option>夏</option><option>秋</option><option>冬</option></select></div></div><div class="form-group"><label>🎨 风格</label><input class="input" id="newClStyle" placeholder="如：休闲、商务"></div><div class="form-group"><label>📝 备注</label><textarea class="textarea" id="newClNote"></textarea></div><div class="form-group"><label>🖼️ 图片URL</label><input class="input" id="newClImg"></div><div class="upload-zone" id="singleUploadZone" style="padding:18px;"><span style="font-size:24px;">📤</span> 点击上传图片</div><input type="file" id="singleFileInput" accept="image/*" style="display:none;">`,async(overlay)=>{
+  showModal('➕ 手动添加衣物',`<div class="form-group"><label>📛 名称</label><input class="input" id="newClName" placeholder="如：白色简约衬衫"></div><div class="form-row"><div class="form-group"><label>🏷️ 品类</label><select class="select" id="newClCat"><option value="">🤖未识别</option>${cats.map(c=>`<option>${c}</option>`).join('')}</select></div><div class="form-group"><label>🍂 季节（可多选）</label><span id="newClSeasonChecks" style="display:inline-flex;gap:8px;">${['春','夏','秋','冬'].map(s=>`<label style="font-size:13px;cursor:pointer;"><input type="checkbox" value="${s}"> ${s}</label>`).join('')}</span></div></div><div class="form-group"><label>🎨 风格</label><input class="input" id="newClStyle" placeholder="如：休闲、商务"></div><div class="form-group"><label>📝 备注</label><textarea class="textarea" id="newClNote"></textarea></div><div class="form-group"><label>🖼️ 图片URL</label><input class="input" id="newClImg"></div><div class="upload-zone" id="singleUploadZone" style="padding:18px;"><span style="font-size:24px;">📤</span> 点击上传图片</div><input type="file" id="singleFileInput" accept="image/*" style="display:none;">`,async(overlay)=>{
     const name=overlay.querySelector('#newClName').value.trim();
     if(!name){showToast('请输入名称','error');return false;}
     const id=genId();
@@ -1399,7 +1408,7 @@ function addClothing(){
       imageId='img_'+id;
       await saveImage(imageId, urlInput);
     }
-    AppData.wardrobe.push({id,name,category:overlay.querySelector('#newClCat').value,season:overlay.querySelector('#newClSeason').value,style:overlay.querySelector('#newClStyle').value,note:overlay.querySelector('#newClNote').value,imageId,image:uploaded||urlInput||'',archived:false,createdAt:today()});
+    AppData.wardrobe.push({id,name,category:overlay.querySelector('#newClCat').value||'上衣',season:(()=>{const v=[...overlay.querySelectorAll('#newClSeasonChecks input:checked')].map(c=>c.value);return v.length?v:['春'];})(),style:overlay.querySelector('#newClStyle').value,note:overlay.querySelector('#newClNote').value,imageId,image:uploaded||urlInput||'',archived:false,createdAt:today()});
     saveData(AppData);cloudSaveForce();renderWardrobe();showToast('✨ 衣物添加成功！');
   });
   setTimeout(()=>{
@@ -1411,10 +1420,10 @@ function addClothing(){
       const file=e.target.files[0];if(!file)return;
       const dataUrl=await compressImage(file);
       const r=aiRecognize(file.name);
-      const nameEl=document.getElementById('newClName');const catEl=document.getElementById('newClCat');const seasonEl=document.getElementById('newClSeason');const styleEl=document.getElementById('newClStyle');const imgEl=document.getElementById('newClImg');
+      const nameEl=document.getElementById('newClName');const catEl=document.getElementById('newClCat');const styleEl=document.getElementById('newClStyle');const imgEl=document.getElementById('newClImg');
       if(nameEl&&!nameEl.value)nameEl.value=r.name;
       if(catEl)catEl.value=r.category;
-      if(seasonEl)seasonEl.value=r.season;
+      if(overlay)overlay.querySelectorAll('#newClSeasonChecks input').forEach(c=>c.checked=(r.season||[]).includes(c.value));
       if(styleEl&&!styleEl.value)styleEl.value=r.style;
       if(imgEl)imgEl.value=dataUrl;
       const overlay=document.querySelector('.modal-overlay');
@@ -1427,7 +1436,7 @@ function viewClothing(id){
   const item=AppData.wardrobe.find(w=>w.id===id);if(!item)return;
   const catIcons={'T恤':'👚','衬衫':'👔','毛衣':'🧶','卫衣':'🧥','外套':'🧥','风衣':'🧥','大衣':'🧥','夹克':'🧥','半身裙':'👗','连衣裙':'👗','长裤':'👖','短裤':'🩳','运动装':'🎽','内衣配饰':'👙','上衣':'👚'};
   const imgHtml=item.imageId?`<img id="vdimg-${id}" src="" style="max-width:200px;max-height:200px;border-radius:14px;border:2px solid var(--pink-200);display:none;"><div id="vdph-${id}" style="font-size:72px;">${catIcons[item.category]||'👕'}</div>`:(item.image?`<img src="${item.image}" style="max-width:200px;max-height:200px;border-radius:14px;border:2px solid var(--pink-200);">`:`<div style="font-size:72px;">${catIcons[item.category]||'👕'}</div>`);
-  showModal('👔 衣物详情',`<div style="text-align:center;margin-bottom:12px;">${imgHtml}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;"><p><strong>📛 名称：</strong>${escapeHtml(item.name)}</p><p><strong>🏷️ 品类：</strong><span class="badge-pill">${item.category}</span></p><p><strong>🍂 季节：</strong>${item.season}季</p><p><strong>🎨 风格：</strong>${item.style||'未设置'}</p><p><strong>📅 添加：</strong>${item.createdAt}</p></div><p style="margin-top:8px;"><strong>📝 备注：</strong>${escapeHtml(item.note||'无')}</p><div style="margin-top:14px;display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="editClothing('${id}')">✏️ 编辑</button><button class="btn btn-danger btn-sm" onclick="deleteClothing('${id}')">🗑️ 删除</button><button class="btn btn-outline btn-sm" onclick="archiveClothing('${id}')">${item.archived?'📥 取消归档':'📦 归档'}</button></div>`,()=>true);
+  showModal('👔 衣物详情',`<div style="text-align:center;margin-bottom:12px;">${imgHtml}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;"><p><strong>📛 名称：</strong>${escapeHtml(item.name)}</p><p><strong>🏷️ 品类：</strong><span class="badge-pill">${item.category}</span></p><p><strong>🍂 季节：</strong>${seasonDisplay(item.season)}季</p><p><strong>🎨 风格：</strong>${item.style||'未设置'}</p><p><strong>📅 添加：</strong>${item.createdAt}</p></div><p style="margin-top:8px;"><strong>📝 备注：</strong>${escapeHtml(item.note||'无')}</p><div style="margin-top:14px;display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="editClothing('${id}')">✏️ 编辑</button><button class="btn btn-danger btn-sm" onclick="deleteClothing('${id}')">🗑️ 删除</button><button class="btn btn-outline btn-sm" onclick="archiveClothing('${id}')">${item.archived?'📥 取消归档':'📦 归档'}</button></div>`,()=>true);
   if(item.imageId){
     getImage(item.imageId).then(src=>{
       if(src){
@@ -1441,10 +1450,11 @@ function viewClothing(id){
 function editClothing(id){
   const item=AppData.wardrobe.find(w=>w.id===id);if(!item)return;
   const cats=['上衣','T恤','衬衫','毛衣','卫衣','背心吊带','风衣','大衣','夹克','羽绒服','西装','开衫','防晒衣','半身裙','连衣裙','牛仔裤','长裤','短裤','打底裤','运动装','内衣家居','泳衣','特色服饰'];
-  showModal('✏️ 编辑衣物',`<div class="form-group"><label>📛 名称</label><input class="input" id="editName" value="${escapeHtml(item.name)}"></div><div class="form-row"><div class="form-group"><label>🏷️ 品类</label><select class="select" id="editCat">${cats.map(c=>`<option ${item.category===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="form-group"><label>🍂 季节</label><select class="select" id="editSeason"><option ${item.season==='春'?'selected':''}>春</option><option ${item.season==='夏'?'selected':''}>夏</option><option ${item.season==='秋'?'selected':''}>秋</option><option ${item.season==='冬'?'selected':''}>冬</option></select></div></div><div class="form-group"><label>🎨 风格</label><input class="input" id="editStyle" value="${escapeHtml(item.style||'')}"></div><div class="form-group"><label>📝 备注</label><textarea class="textarea" id="editNote">${escapeHtml(item.note||'')}</textarea></div><div class="form-group"><label>🖼️ 图片URL</label><input class="input" id="editImg" value="${escapeHtml(item.image||'')}"></div>`,(overlay)=>{
+  showModal('✏️ 编辑衣物',`<div class="form-group"><label>📛 名称</label><input class="input" id="editName" value="${escapeHtml(item.name)}"></div><div class="form-row"><div class="form-group"><label>🏷️ 品类</label><select class="select" id="editCat"><option value="">🤖未识别</option>${cats.map(c=>`<option ${item.category===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="form-group"><label>🍂 季节（可多选）</label><span id="editSeasonChecks" style="display:inline-flex;gap:8px;">${['春','夏','秋','冬'].map(s=>`<label style="font-size:13px;cursor:pointer;"><input type="checkbox" value="${s}" ${(seasonToArr(item.season)).includes(s)?'checked':''}> ${s}</label>`).join('')}</span></div></div><div class="form-group"><label>🎨 风格</label><input class="input" id="editStyle" value="${escapeHtml(item.style||'')}"></div><div class="form-group"><label>📝 备注</label><textarea class="textarea" id="editNote">${escapeHtml(item.note||'')}</textarea></div><div class="form-group"><label>🖼️ 图片URL</label><input class="input" id="editImg" value="${escapeHtml(item.image||'')}"></div>`,(overlay)=>{
     item.name=overlay.querySelector('#editName').value.trim()||item.name;
-    item.category=overlay.querySelector('#editCat').value;
-    item.season=overlay.querySelector('#editSeason').value;
+    item.category=overlay.querySelector('#editCat').value||'上衣';
+    const ev=[...overlay.querySelectorAll('#editSeasonChecks input:checked')].map(c=>c.value);
+    item.season=ev.length?ev:['春'];
     item.style=overlay.querySelector('#editStyle').value;
     item.note=overlay.querySelector('#editNote').value;
     item.image=overlay.querySelector('#editImg').value;
@@ -1493,15 +1503,15 @@ async function fetchWeatherAndRecommend(){
 async function recommendOutfit(temp,code){
   const items=AppData.wardrobe.filter(w=>!w.archived);
   const isRain=code>=51&&code<=65;
-  let rule,sug;
-  if(temp>=30){rule='夏';sug='☀️ 炎热·轻薄透气穿搭';}
-  else if(temp>=22){rule='夏';sug='🌿 舒适·清爽简约穿搭';}
-  else if(temp>=15){rule='春秋';sug='🍂 微凉·薄外套+长袖';}
-  else if(temp>=5){rule='春秋';sug='🧣 转凉·毛衣+外套';}
-  else{rule='冬';sug='❄️ 寒冷·保暖羽绒服+毛衣';}
+  let ruleSeasons,sug;
+  if(temp>=30){ruleSeasons=['夏'];sug='☀️ 炎热·轻薄透气穿搭';}
+  else if(temp>=22){ruleSeasons=['夏'];sug='🌿 舒适·清爽简约穿搭';}
+  else if(temp>=15){ruleSeasons=['春','秋'];sug='🍂 微凉·薄外套+长袖';}
+  else if(temp>=5){ruleSeasons=['春','秋'];sug='🧣 转凉·毛衣+外套';}
+  else{ruleSeasons=['冬'];sug='❄️ 寒冷·保暖羽绒服+毛衣';}
   if(isRain)sug+=' ☔ 带伞~';
-  // 优先按季节匹配，无匹配再回退到全部
-  const seasonMatch=i=>i.season===rule||(rule==='春秋'&&(i.season==='春'||i.season==='秋'))||i.season==='春秋';
+  // 优先按季节匹配（多季数组，命中任一时令即可），无匹配再回退到全部
+  const seasonMatch=i=>Array.isArray(i.season)?i.season.some(s=>ruleSeasons.includes(s)):ruleSeasons.includes(i.season);
   let tops=items.filter(i=>['上衣','T恤','衬衫','毛衣','卫衣'].includes(i.category)&&seasonMatch(i));
   if(tops.length===0)tops=items.filter(i=>['上衣','T恤','衬衫','毛衣','卫衣'].includes(i.category));
   let bottoms=items.filter(i=>['长裤','短裤','半身裙','连衣裙'].includes(i.category)&&seasonMatch(i));
@@ -2434,7 +2444,7 @@ function renderOutfitList(p){
   const outfits=p.outfits||[];
   if(outfits.length===0)return '<div class="empty-state" style="padding:20px;"><div class="empty-icon">👔</div><p>还没有选择衣物</p></div>';
   return outfits.map(o=>`<div class="list-item" style="margin-bottom:6px;">
-    <div class="item-info"><div class="item-title">${o.image?`<img src="${o.image}" style="width:30px;height:30px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:6px;">`:''}${escapeHtml(o.name)}</div><div class="item-meta">${o.category} · ${o.season}季</div></div>
+    <div class="item-info"><div class="item-title">${o.image?`<img src="${o.image}" style="width:30px;height:30px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:6px;">`:''}${escapeHtml(o.name)}</div><div class="item-meta">${o.category} · ${seasonDisplay(o.season)}季</div></div>
     <button class="btn btn-danger btn-xs" onclick="removeOutfit('${p.id}','${o.id}')">✕</button>
   </div>`).join('');
 }
@@ -2450,7 +2460,7 @@ function selectOutfits(pid){
       <input type="checkbox" id="cl_${i.id}" ${selectedIds.includes(i.id)?'checked':''} style="width:18px;height:18px;">
       <label for="cl_${i.id}" style="flex:1;cursor:pointer;display:flex;align-items:center;gap:8px;">
         ${i.image?`<img src="${i.image}" style="width:40px;height:40px;object-fit:cover;border-radius:8px;">`:'<div style="width:40px;height:40px;background:var(--pink-100);border-radius:8px;display:flex;align-items:center;justify-content:center;">👔</div>'}
-        <div><div style="font-weight:600;">${escapeHtml(i.name)}</div><div style="font-size:11px;color:var(--text-light);">${i.category} · ${i.season}季</div></div>
+        <div><div style="font-weight:600;">${escapeHtml(i.name)}</div><div style="font-size:11px;color:var(--text-light);">${i.category} · ${seasonDisplay(i.season)}季</div></div>
       </label>
     </div>`).join('')}</div>`;
 
@@ -2731,16 +2741,18 @@ function init(){
   const def=getDefaultData();
   if(!AppData.retirePlan||typeof AppData.retirePlan!=='object')AppData.retirePlan=def.retirePlan;
   ['incomeExpenses','wardrobe','outfitTemplates','dietPlans','calorieRecords','weightRecords','milkTeaMenu','milkTeaHistory','travelPlans','countdowns','newsItems'].forEach(k=>{if(!Array.isArray(AppData[k]))AppData[k]=def[k]||[];});
+  // 旧数据季节可能是字符串('春秋'/'夏')，统一转为 春/夏/秋/冬 数组，避免筛选器里出现不存在的值
+  AppData.wardrobe.forEach(w=>{if(w&&w.season!==undefined)w.season=seasonToArr(w.season);});
   if(!AppData.milkTeaMenu||AppData.milkTeaMenu.length===0)AppData.milkTeaMenu=def.milkTeaMenu;
 
   if(AppData.wardrobe.length===0){
     AppData.wardrobe=[
-      {id:genId(),name:'白色简约衬衫',category:'衬衫',season:'春秋',style:'商务休闲',note:'通勤百搭',image:'',archived:false,createdAt:today()},
-      {id:genId(),name:'黑色修身长裤',category:'长裤',season:'春秋',style:'商务',note:'通勤必备',image:'',archived:false,createdAt:today()},
-      {id:genId(),name:'卡其色风衣',category:'风衣',season:'春秋',style:'休闲',note:'百搭外套',image:'',archived:false,createdAt:today()},
-      {id:genId(),name:'灰色卫衣',category:'卫衣',season:'秋冬',style:'运动休闲',note:'周末穿搭',image:'',archived:false,createdAt:today()},
-      {id:genId(),name:'蓝色牛仔裤',category:'长裤',season:'春秋',style:'休闲',note:'日常百搭',image:'',archived:false,createdAt:today()},
-      {id:genId(),name:'碎花连衣裙',category:'连衣裙',season:'夏',style:'甜美',note:'约会穿搭',image:'',archived:false,createdAt:today()},
+      {id:genId(),name:'白色简约衬衫',category:'衬衫',season:['春','秋'],style:'商务休闲',note:'通勤百搭',image:'',archived:false,createdAt:today()},
+      {id:genId(),name:'黑色修身长裤',category:'长裤',season:['春','秋'],style:'商务',note:'通勤必备',image:'',archived:false,createdAt:today()},
+      {id:genId(),name:'卡其色风衣',category:'风衣',season:['春','秋'],style:'休闲',note:'百搭外套',image:'',archived:false,createdAt:today()},
+      {id:genId(),name:'灰色卫衣',category:'卫衣',season:['秋','冬'],style:'运动休闲',note:'周末穿搭',image:'',archived:false,createdAt:today()},
+      {id:genId(),name:'蓝色牛仔裤',category:'长裤',season:['春','秋'],style:'休闲',note:'日常百搭',image:'',archived:false,createdAt:today()},
+      {id:genId(),name:'碎花连衣裙',category:'连衣裙',season:['夏'],style:'甜美',note:'约会穿搭',image:'',archived:false,createdAt:today()},
     ];
     AppData.countdowns=[
       {id:genId(),title:'2026年新年倒计时',targetDate:'2026-01-01T00:00',milestones:['圣诞节','元旦计划'],pinned:true,createdAt:today()},
