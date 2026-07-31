@@ -350,6 +350,14 @@ body {
 .btn-ghost:hover { background: #fff; border-color: var(--accent); }
 .closet-toggle { transition: all 0.2s; }
 
+/* 减脂方案历史：可展开详情 */
+details.plan-history { background: #fff8fb; border: 1px solid var(--pink-200); border-radius: var(--radius-md); padding: 10px 12px; margin-bottom: 10px; }
+details.plan-history summary { cursor: pointer; font-weight: 700; font-size: 13px; list-style: none; display: flex; align-items: center; }
+details.plan-history summary::-webkit-details-marker { display: none; }
+details.plan-history summary::before { content: '▸ '; color: var(--accent); }
+details.plan-history[open] summary::before { content: '▾ '; }
+details.plan-history summary span { flex: 1; }
+
 /* ==================== 输入控件 ==================== */
 .input, .select, .textarea {
   width: 100%;
@@ -668,6 +676,7 @@ button { font-family: var(--font-cute); }
       <div class="nav-sub">
         <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('diet','plan')">🥗 减脂方案</div>
         <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('diet','calorie')">💖 热量记录</div>
+        <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('diet','weight')">⚖️ 体重追踪</div>
         <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('diet','milktea')">🧋 奶茶摇一摇</div>
       </div>
     </div>
@@ -848,7 +857,7 @@ async function backfillCloudImages(){
   if(changed){ saveData(AppData); }
 }
 function getDefaultData(){return{
-  wardrobe:[],outfitTemplates:[],dietPlans:[],calorieRecords:[],
+  wardrobe:[],outfitTemplates:[],dietPlans:[],calorieRecords:[],weightRecords:[],
   milkTeaHistory:[],milkTeaMenu:[
     // 喜茶
     {brand:'喜茶',name:'多肉葡萄',sweetness:'少糖',ice:'少冰',topping:'葡萄果肉'},
@@ -1552,10 +1561,11 @@ function deleteTemplate(id){AppData.outfitTemplates=AppData.outfitTemplates.filt
 function renderDiet(){
   const area=document.getElementById('contentArea');
   const activeTab=currentModule==='diet'?currentSubTab:'plan';
-  area.innerHTML=`<div class="tabs"><div class="tab ${activeTab==='plan'?'active':''}" data-tab="plan">🥗 减脂方案</div><div class="tab ${activeTab==='calorie'?'active':''}" data-tab="calorie">💖 热量记录</div><div class="tab ${activeTab==='milktea'?'active':''}" data-tab="milktea">🧋 奶茶摇一摇</div></div><div id="dietContent"></div>`;
+  area.innerHTML=`<div class="tabs"><div class="tab ${activeTab==='plan'?'active':''}" data-tab="plan">🥗 减脂方案</div><div class="tab ${activeTab==='calorie'?'active':''}" data-tab="calorie">💖 热量记录</div><div class="tab ${activeTab==='milktea'?'active':''}" data-tab="milktea">🧋 奶茶摇一摇</div><div class="tab ${activeTab==='weight'?'active':''}" data-tab="weight">⚖️ 体重追踪</div></div><div id="dietContent"></div>`;
   area.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{currentSubTab=t.dataset.tab;renderDiet();});});
   if(activeTab==='plan')renderDietPlan();
   else if(activeTab==='calorie')renderCalorie();
+  else if(activeTab==='weight')renderWeight();
   else renderMilkTea();
 }
 
@@ -1590,6 +1600,24 @@ const DIET_GUIDE_MEALS={
   ]
 };
 
+function planMealHtml(m,label,icon,color){
+  if(!m)return '';
+  return `<div style="background:${color};border-radius:var(--radius-md);padding:14px;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <span style="font-size:20px;">${icon}</span>
+      <span style="font-size:16px;font-weight:700;">${label}</span>
+      <span class="badge-rose" style="margin-left:auto;">🔥 ${m.cal||0} kcal</span>
+    </div>
+    <div style="font-weight:700;font-size:14px;margin-bottom:6px;">${escapeHtml(m.name||'')}</div>
+    ${m.items?`<div style="font-size:12px;color:var(--text-secondary);margin-bottom:6px;">${m.items.map(i=>`• ${escapeHtml(i)}`).join('<br>')}</div>`:''}
+    ${m.cook?`<div style="font-size:11px;background:rgba(255,255,255,0.7);padding:6px 10px;border-radius:8px;margin-top:6px;">👨‍🍳 ${escapeHtml(m.cook)}</div>`:''}
+    ${m.tip?`<div style="font-size:10px;color:var(--accent);margin-top:4px;">💡 ${escapeHtml(m.tip)}</div>`:''}
+  </div>`;
+}
+const DIET_PLAN_MEALS=[['🌅','早餐','#ffe5ec'],['☀️','午餐','#fff4e0'],['🌙','晚餐','#e6f7ed'],['🍎','加餐','#f0e6fa']];
+function planMealsGrid(p){
+  return `<div class="grid-2">${DIET_PLAN_MEALS.map(([ic,lb,cl])=>planMealHtml(p[lb==='早餐'?'breakfast':lb==='午餐'?'lunch':lb==='晚餐'?'dinner':'snack'],lb,ic,cl)).join('')}</div>`;
+}
 function renderDietPlan(){
   const container=document.getElementById('dietContent');
   const todayPlan=AppData.dietPlans.find(p=>p.date===today());
@@ -1602,30 +1630,39 @@ function renderDietPlan(){
     saveData(AppData);
   }
   const plan=todayPlan||AppData.dietPlans[AppData.dietPlans.length-1];
-  const meals=[{icon:'🌅',label:'早餐',data:plan.breakfast,color:'#ffe5ec'},{icon:'☀️',label:'午餐',data:plan.lunch,color:'#fff4e0'},{icon:'🌙',label:'晚餐',data:plan.dinner,color:'#e6f7ed'},{icon:'🍎',label:'加餐',data:plan.snack,color:'#f0e6fa'}];
   container.innerHTML=`<div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">${today()} 减脂饮食方案</span><span class="badge-pill">${plan.totalCal} kcal</span></div>
     <div style="background:linear-gradient(135deg,#e6f7ed,#d4f1e0);border-radius:var(--radius-md);padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--text-secondary);">
       📋 依据《中国居民膳食指南(2022)》· 减脂期建议每日摄入1200-1500kcal · 少油少盐 · 多吃蔬果
     </div>
-    <div class="grid-2">${meals.map(m=>`
-      <div style="background:${m.color};border-radius:var(--radius-md);padding:14px;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-          <span style="font-size:20px;">${m.icon}</span>
-          <span style="font-size:16px;font-weight:700;">${m.label}</span>
-          <span class="badge-rose" style="margin-left:auto;">🔥 ${m.data?.cal||0} kcal</span>
-        </div>
-        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">${escapeHtml(m.data?.name||'')}</div>
-        ${m.data?.items?`<div style="font-size:12px;color:var(--text-secondary);margin-bottom:6px;">${m.data.items.map(i=>`• ${escapeHtml(i)}`).join('<br>')}</div>`:''}
-        ${m.data?.cook?`<div style="font-size:11px;background:rgba(255,255,255,0.7);padding:6px 10px;border-radius:8px;margin-top:6px;">👨‍🍳 ${escapeHtml(m.data.cook)}</div>`:''}
-        ${m.data?.tip?`<div style="font-size:10px;color:var(--accent);margin-top:4px;">💡 ${escapeHtml(m.data.tip)}</div>`:''}
-      </div>`).join('')}
-    </div>
-    <div style="text-align:center;margin-top:14px;display:flex;gap:8px;justify-content:center;">
+    ${planMealsGrid(plan)}
+    <div style="text-align:center;margin-top:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
       <button class="btn btn-pink btn-sm" onclick="regenerateDietPlan()">🔄 换一套</button>
       <button class="btn btn-outline btn-sm" onclick="showDietGuide()">📖 膳食指南</button>
+      <button class="btn btn-primary btn-sm" onclick="confirmPlanAsCalorie('${plan.id}')">${plan.date===today()&&plan.confirmed?'✅ 今日已记录':'✅ 确认并记录今日热量'}</button>
     </div>
   </div>
-  <div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">历史方案</span></div>${AppData.dietPlans.slice().reverse().slice(0,5).map(p=>`<div class="list-item"><div class="item-info"><div class="item-title">${p.date}</div><div class="item-meta">${p.totalCal} kcal</div></div></div>`).join('')||'<div class="empty-state"><p>暂无历史</p></div>'}</div>`;
+  <div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">历史方案</span><span class="badge-pill">${AppData.dietPlans.length}套</span></div>
+    ${AppData.dietPlans.slice().reverse().map(p=>`<details class="plan-history"><summary><span>📅 ${p.date} · ${p.totalCal} kcal</span>${p.date===today()&&p.confirmed?'<span class="badge-success" style="margin-left:6px;">已记录</span>':''}</summary>
+      ${planMealsGrid(p)}
+      <button class="btn btn-pink btn-sm btn-block" style="margin-top:10px;" onclick="confirmPlanAsCalorie('${p.id}')">✅ 确认此方案并记录为今日热量</button>
+    </details>`).join('')||'<div class="empty-state"><p>暂无历史</p></div>'}
+  </div>`;
+}
+function confirmPlanAsCalorie(planId){
+  const plan=AppData.dietPlans.find(p=>p.id===planId);
+  if(!plan){showToast('方案不存在','error');return;}
+  if(plan.date===today()&&plan.confirmed&&!confirm('今日方案已记录过热量，确定再次记录？'))return;
+  const meals=[['早餐',plan.breakfast],['午餐',plan.lunch],['晚餐',plan.dinner],['加餐',plan.snack]];
+  let added=0;
+  for(const [mealType,m] of meals){
+    if(m&&m.name&&m.cal){
+      AppData.calorieRecords.push({id:genId(),date:today(),foodName:m.name,mealType,calories:m.cal,note:`减脂方案(${plan.date})`,image:''});
+      added++;
+    }
+  }
+  if(plan.date===today())plan.confirmed=true;
+  saveData(AppData);cloudSaveForce();renderDietPlan();
+  showToast(`✅ 已记录 ${added} 餐到今日热量`);
 }
 function regenerateDietPlan(){AppData.dietPlans=AppData.dietPlans.filter(p=>p.date!==today());saveData(AppData);renderDietPlan();showToast('✨ 新方案');}
 function showDietGuide(){
@@ -1739,6 +1776,153 @@ function addCalorieRecord(){
   },100);
 }
 function deleteCalorieRecord(id){AppData.calorieRecords=AppData.calorieRecords.filter(r=>r.id!==id);saveData(AppData);renderCalorie();showToast('已删除');}
+
+/* ==================== 体重追踪 ==================== */
+function weightMid(r){
+  if(r.morning!=null&&r.evening!=null)return +(((r.morning+r.evening)/2).toFixed(1));
+  if(r.morning!=null)return r.morning;
+  if(r.evening!=null)return r.evening;
+  return null;
+}
+function weightStats(recs){
+  const days=recs.length;
+  const mids=recs.map(weightMid).filter(v=>v!=null);
+  const avg=mids.length?+(mids.reduce((s,v)=>s+v,0)/mids.length).toFixed(1):null;
+  const latest=mids.length?mids[mids.length-1]:null;
+  const first=mids.length?mids[0]:null;
+  const diff=(latest!=null&&first!=null)?+(latest-first).toFixed(1):null;
+  return {days,avg,latest,diff};
+}
+function renderWeight(){
+  const container=document.getElementById('dietContent');
+  if(!container)return;
+  const recs=(AppData.weightRecords||[]).slice().sort((a,b)=>a.date.localeCompare(b.date));
+  const todayRec=recs.find(r=>r.date===today());
+  const tpl=`
+  <div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">体重录入</span></div>
+    <div class="form-row"><div class="form-group"><label>📅 日期</label><input class="input" type="date" id="wDate" value="${today()}"></div></div>
+    <div class="form-row">
+      <div class="form-group"><label>🌅 早上空腹体重 (kg)</label><input class="input" type="number" step="0.1" id="wMorning" placeholder="如 55.2" value="${todayRec&&todayRec.morning!=null?todayRec.morning:''}"></div>
+      <div class="form-group"><label>🌙 晚上睡前体重 (kg)</label><input class="input" type="number" step="0.1" id="wEvening" placeholder="如 54.8" value="${todayRec&&todayRec.evening!=null?todayRec.evening:''}"></div>
+    </div>
+    <button class="btn btn-pink btn-block" onclick="saveWeightRecord()">💾 保存体重</button>
+  </div>`;
+  const stats=weightStats(recs);
+  const chart=renderWeightChart(recs);
+  const todayCal=AppData.calorieRecords.filter(r=>r.date===today()).reduce((s,r)=>s+r.calories,0);
+  const calOver=todayCal>AppData.calorieThreshold;
+  const trend=`
+  <div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">体重趋势</span></div>
+    <div class="grid-2" style="margin-bottom:12px;">
+      <div style="text-align:center;"><div style="font-size:11px;color:var(--text-secondary)">记录天数</div><div style="font-size:22px;font-weight:800;">${stats.days}</div></div>
+      <div style="text-align:center;"><div style="font-size:11px;color:var(--text-secondary)">最新体重</div><div style="font-size:22px;font-weight:800;color:var(--accent)">${stats.latest!=null?stats.latest+' kg':'—'}</div></div>
+      <div style="text-align:center;"><div style="font-size:11px;color:var(--text-secondary)">周期平均</div><div style="font-size:22px;font-weight:800;">${stats.avg!=null?stats.avg+' kg':'—'}</div></div>
+      <div style="text-align:center;"><div style="font-size:11px;color:var(--text-secondary)">累计涨跌</div><div style="font-size:22px;font-weight:800;color:${stats.diff>0?'var(--danger)':'var(--success)'}">${stats.diff>0?'+':''}${stats.diff!=null?stats.diff:'—'}</div></div>
+    </div>
+    ${chart}
+    <div style="font-size:11px;color:var(--text-light);margin-top:8px;text-align:center;">📈 每日 3 点：早体重 → 当日均值中点 → 晚体重</div>
+    <div style="font-size:12px;background:#fff4e0;border-radius:8px;padding:8px 10px;margin-top:8px;">🍽️ 今日已记录热量：<strong>${todayCal}</strong> / ${AppData.calorieThreshold} kcal ${calOver?'<span class="badge-rose">⚠️ 超标</span>':'<span class="badge-success">✅ 达标</span>'}<br><span style="color:var(--text-light)">保持热量缺口，体重更稳地往下走 ↓</span></div>
+  </div>`;
+  const hist=recs.slice().reverse().map(r=>{
+    const mid=weightMid(r);
+    return `<div class="list-item">
+      <div class="item-info">
+        <div class="item-title">⚖️ ${r.date}</div>
+        <div class="item-meta">🌅 ${r.morning!=null?r.morning:'—'} · 🌙 ${r.evening!=null?r.evening:'—'} · 中点 ${mid!=null?mid:'—'} kg</div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-outline btn-xs" onclick="editWeightRecord('${r.id}')">编辑</button>
+        <button class="btn btn-danger btn-xs" onclick="deleteWeightRecord('${r.id}')">删除</button>
+      </div>
+    </div>`;
+  }).join('');
+  const histCard=`<div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">历史记录</span><span class="badge-pill">${recs.length}条</span></div>${hist||'<div class="empty-state"><div class="empty-icon">⚖️</div><p>还没有体重记录~</p></div>'}</div>`;
+  container.innerHTML=tpl+trend+histCard;
+}
+function saveWeightRecord(){
+  const date=document.getElementById('wDate').value||today();
+  const m=document.getElementById('wMorning').value;
+  const e=document.getElementById('wEvening').value;
+  const morning=(m===''||m==null)?null:parseFloat(m);
+  const evening=(e===''||e==null)?null:parseFloat(e);
+  if(morning==null&&evening==null){showToast('请至少填写一项体重','error');return;}
+  let rec=AppData.weightRecords.find(r=>r.date===date);
+  if(rec){rec.morning=morning;rec.evening=evening;}
+  else AppData.weightRecords.push({id:genId(),date,morning,evening});
+  saveData(AppData);cloudSaveForce();renderWeight();showToast('💾 体重已保存');
+}
+function editWeightRecord(id){
+  const r=AppData.weightRecords.find(x=>x.id===id);if(!r)return;
+  showModal('✏️ 编辑体重',`
+    <div class="form-row">
+      <div class="form-group"><label>🌅 早上空腹 (kg)</label><input class="input" type="number" step="0.1" id="ewM" value="${r.morning!=null?r.morning:''}"></div>
+      <div class="form-group"><label>🌙 晚上睡前 (kg)</label><input class="input" type="number" step="0.1" id="ewE" value="${r.evening!=null?r.evening:''}"></div>
+    </div>`,()=>{
+      const m=document.getElementById('ewM').value, e=document.getElementById('ewE').value;
+      r.morning=(m==='')?null:parseFloat(m);
+      r.evening=(e==='')?null:parseFloat(e);
+      saveData(AppData);cloudSaveForce();renderWeight();showToast('✅ 已更新');
+    });
+}
+function deleteWeightRecord(id){if(confirm('删除这条体重记录？')){AppData.weightRecords=AppData.weightRecords.filter(r=>r.id!==id);saveData(AppData);cloudSaveForce();renderWeight();showToast('🗑️ 已删除');}}
+function renderWeightChart(recs){
+  if(!recs||recs.length===0){
+    return `<div style="text-align:center;color:var(--text-light);padding:34px 0;">📉 记录体重后，这里会自动画出趋势图~</div>`;
+  }
+  const W=680,H=280,L=46,R=16,T=26,B=40;
+  const plotW=W-L-R, plotH=H-T-B;
+  const n=recs.length;
+  const slotW=plotW/n;
+  const pts=[];
+  recs.forEach((r,i)=>{
+    const cx=L+slotW*(i+0.5);
+    const mx=L+slotW*i+slotW*0.22;
+    const ex=L+slotW*(i+1)-slotW*0.22;
+    const mid=weightMid(r);
+    if(r.morning!=null)pts.push({x:mx,val:r.morning,type:'morning'});
+    if(mid!=null)pts.push({x:cx,val:mid,type:'mid'});
+    if(r.evening!=null)pts.push({x:ex,val:r.evening,type:'evening'});
+  });
+  const vals=pts.map(p=>p.val);
+  let minV=Math.min(...vals), maxV=Math.max(...vals);
+  if(minV===maxV){minV-=1;maxV+=1;}
+  const pad=(maxV-minV)*0.18; minV-=pad; maxV+=pad;
+  const yOf=v=>T+(maxV-v)/(maxV-minV)*plotH;
+  const linePts=pts.map(p=>`${p.x.toFixed(1)},${yOf(p.val).toFixed(1)}`).join(' ');
+  let yt='';
+  const ticks=4;
+  for(let i=0;i<=ticks;i++){
+    const v=minV+(maxV-minV)*i/ticks;
+    const y=T+plotH*(1-i/ticks);
+    yt+=`<line x1="${L}" y1="${y.toFixed(1)}" x2="${W-R}" y2="${y.toFixed(1)}" stroke="#f0e6ee" stroke-width="1"/>`;
+    yt+=`<text x="${L-6}" y="${(y+4).toFixed(1)}" font-size="10" fill="#b09bb0" text-anchor="end">${v.toFixed(1)}</text>`;
+  }
+  let xt=''; const step=Math.max(1,Math.ceil(n/7));
+  recs.forEach((r,i)=>{
+    if(i%step===0||i===n-1){
+      const cx=L+slotW*(i+0.5);
+      xt+=`<text x="${cx.toFixed(1)}" y="${H-14}" font-size="10" fill="#b09bb0" text-anchor="middle">${r.date.slice(5)}</text>`;
+    }
+  });
+  let dots='';
+  pts.forEach(p=>{
+    const c=p.type==='morning'?'#ff9eb5':p.type==='evening'?'#9db8ff':'#7fd1a6';
+    if(p.type==='mid'){
+      dots+=`<rect x="${(p.x-3.5).toFixed(1)}" y="${(yOf(p.val)-3.5).toFixed(1)}" width="7" height="7" transform="rotate(45 ${p.x.toFixed(1)} ${yOf(p.val).toFixed(1)})" fill="${c}"/>`;
+    } else {
+      dots+=`<circle cx="${p.x.toFixed(1)}" cy="${yOf(p.val).toFixed(1)}" r="3.8" fill="${c}"/>`;
+    }
+  });
+  const legend=`<g font-size="10" fill="#8a7a8a">
+    <circle cx="${L}" cy="12" r="4" fill="#ff9eb5"/><text x="${L+8}" y="15">早</text>
+    <rect x="${L+38}" y="8" width="8" height="8" transform="rotate(45 ${L+42} 12)" fill="#7fd1a6"/><text x="${L+52}" y="15">中点</text>
+    <circle cx="${L+94}" cy="12" r="4" fill="#9db8ff"/><text x="${L+102}" y="15">晚</text>
+  </g>`;
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;">
+    <defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff9eb5"/><stop offset="0.5" stop-color="#7fd1a6"/><stop offset="1" stop-color="#9db8ff"/></linearGradient></defs>
+    ${yt}${legend}<polyline points="${linePts}" fill="none" stroke="url(#wg)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>${dots}${xt}
+  </svg>`;
+}
 
 let _mtDeviceMotionHandler=null;
 function renderMilkTea(){
@@ -2491,7 +2675,7 @@ function deleteFin(id){AppData.incomeExpenses=AppData.incomeExpenses.filter(r=>r
 function init(){
   const def=getDefaultData();
   if(!AppData.retirePlan||typeof AppData.retirePlan!=='object')AppData.retirePlan=def.retirePlan;
-  ['incomeExpenses','wardrobe','outfitTemplates','dietPlans','calorieRecords','milkTeaMenu','milkTeaHistory','travelPlans','countdowns','newsItems'].forEach(k=>{if(!Array.isArray(AppData[k]))AppData[k]=def[k]||[];});
+  ['incomeExpenses','wardrobe','outfitTemplates','dietPlans','calorieRecords','weightRecords','milkTeaMenu','milkTeaHistory','travelPlans','countdowns','newsItems'].forEach(k=>{if(!Array.isArray(AppData[k]))AppData[k]=def[k]||[];});
   if(!AppData.milkTeaMenu||AppData.milkTeaMenu.length===0)AppData.milkTeaMenu=def.milkTeaMenu;
 
   if(AppData.wardrobe.length===0){
