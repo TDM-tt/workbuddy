@@ -1452,19 +1452,19 @@ async function fetchWeatherAndRecommend(){
     }).catch(()=>({coords:{latitude:39.9,longitude:116.4}}));
     const resp=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&current_weather=true&timezone=auto`);
     const data=await resp.json();
-    recommendOutfit(data.current_weather.temperature,data.current_weather.weathercode);
+    await recommendOutfit(data.current_weather.temperature,data.current_weather.weathercode);
     const wm={0:'☀️ 晴',1:'🌤️ 晴间多云',2:'⛅ 多云',3:'☁️ 阴',45:'🌫️ 雾',51:'🌦️ 小雨',61:'🌧️ 阵雨',71:'❄️ 小雪',80:'⛈️ 雷阵雨'};
     document.getElementById('weatherIcon').textContent=data.current_weather.weathercode<=2?'☀️':data.current_weather.weathercode<=3?'⛅':data.current_weather.weathercode<=55?'🌧️':'🌨️';
     document.getElementById('weatherTemp').textContent=data.current_weather.temperature+'°C';
     document.getElementById('weatherDesc').textContent=wm[data.current_weather.weathercode]||'未知';
   }catch(e){
-    recommendOutfit(22,1);
+    await recommendOutfit(22,1);
     document.getElementById('weatherIcon').textContent='🌤️';
     document.getElementById('weatherTemp').textContent='22°C';
     document.getElementById('weatherDesc').textContent='晴间多云（模拟）';
   }
 }
-function recommendOutfit(temp,code){
+async function recommendOutfit(temp,code){
   const items=AppData.wardrobe.filter(w=>!w.archived);
   const isRain=code>=51&&code<=65;
   let rule,sug;
@@ -1486,18 +1486,28 @@ function recommendOutfit(temp,code){
   const top=pick(tops),bottom=pick(bottoms),outer=temp<20?pick(outers):null;
   const el=document.getElementById('outfitSuggestion');
   if(!el)return;
+  // 单件衣物卡片：优先显示用户上传的真实照片，取不到时回退 emoji
+  const cardHtml=async(item,label,emoji)=>{
+    if(!item)return '';
+    const src=await getClothingImageSrc(item);
+    const inner=src
+      ?`<img src="${src}" style="width:58px;height:58px;object-fit:cover;border-radius:10px;" alt="${escapeHtml(item.name)}">`
+      :`<div style="font-size:32px;">${emoji}</div>`;
+    return `<div style="text-align:center;background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:var(--radius-md);padding:10px;width:88px;"><div style="width:58px;height:58px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;overflow:hidden;">${inner}</div><div style="font-size:12px;font-weight:600;">${escapeHtml(item.name)}</div><div style="font-size:10px;color:var(--accent);">${label}</div></div>`;
+  };
   let html=`<p style="color:var(--text-secondary);margin-bottom:12px;font-weight:600;">📝 ${sug}</p><div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">`;
-  if(top)html+=`<div style="text-align:center;background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:var(--radius-md);padding:10px;width:85px;"><div style="font-size:34px;">👚</div><div style="font-size:12px;font-weight:600;">${escapeHtml(top.name)}</div><div style="font-size:10px;color:var(--accent);">上装</div></div>`;
-  if(bottom)html+=`<div style="text-align:center;background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:var(--radius-md);padding:10px;width:85px;"><div style="font-size:34px;">👖</div><div style="font-size:12px;font-weight:600;">${escapeHtml(bottom.name)}</div><div style="font-size:10px;color:var(--accent);">下装</div></div>`;
-  if(outer)html+=`<div style="text-align:center;background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:var(--radius-md);padding:10px;width:85px;"><div style="font-size:34px;">🧥</div><div style="font-size:12px;font-weight:600;">${escapeHtml(outer.name)}</div><div style="font-size:10px;color:var(--accent);">外套</div></div>`;
-  html+=`<div style="text-align:center;background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:var(--radius-md);padding:10px;width:85px;"><div style="font-size:34px;">💍</div><div style="font-size:12px;font-weight:600;">简约配饰</div><div style="font-size:10px;color:var(--accent);">配饰</div></div></div>`;
+  html+=await cardHtml(top,'上装','👚');
+  html+=await cardHtml(bottom,'下装','👖');
+  html+=await cardHtml(outer,'外套','🧥');
+  html+=`<div style="text-align:center;background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:var(--radius-md);padding:10px;width:88px;"><div style="font-size:32px;">💍</div><div style="font-size:12px;font-weight:600;">简约配饰</div><div style="font-size:10px;color:var(--accent);">配饰</div></div></div>`;
   html+=`<div style="text-align:center;margin-top:14px;"><button class="btn btn-pink btn-sm" onclick="saveOutfitTemplate('${top?.id||''}','${bottom?.id||''}','${outer?.id||''}')">💾 保存模板</button></div>`;
   el.innerHTML=html;
 }
 function generateOutfit(){renderOutfit();}
 function saveOutfitTemplate(tid,bid,oid){
   const t=AppData.wardrobe.find(w=>w.id===tid),b=AppData.wardrobe.find(w=>w.id===bid),o=AppData.wardrobe.find(w=>w.id===oid);
-  AppData.outfitTemplates.push({id:genId(),items:[t?.name,b?.name,o?.name].filter(Boolean),weather:'当前',date:today(),scene:'日常',note:''});
+  const imgs=[t?.image,b?.image,o?.image].filter(Boolean);
+  AppData.outfitTemplates.push({id:genId(),items:[t?.name,b?.name,o?.name].filter(Boolean),imgs,weather:'当前',date:today(),scene:'日常',note:''});
   saveData(AppData);showToast('✨ 模板已保存');
 }
 function manualOutfit(){
@@ -1507,7 +1517,8 @@ function manualOutfit(){
     const b=items.find(i=>i.id===overlay.querySelector('#manBottom').value);
     const o=items.find(i=>i.id===overlay.querySelector('#manOuter').value);
     const scene=overlay.querySelector('#manScene').value||'日常';
-    AppData.outfitTemplates.push({id:genId(),items:[t?.name,b?.name,o?.name].filter(Boolean),weather:'手动',date:today(),scene,note:''});
+    const imgs=[t?.image,b?.image,o?.image].filter(Boolean);
+    AppData.outfitTemplates.push({id:genId(),items:[t?.name,b?.name,o?.name].filter(Boolean),imgs,weather:'手动',date:today(),scene,note:''});
     saveData(AppData);showToast('✨ 已保存');
   });
 }
@@ -1515,7 +1526,7 @@ function renderTemplates(){
   const temps=AppData.outfitTemplates;
   document.getElementById('wardrobeContent').innerHTML=`<div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">穿搭模板库</span><span class="badge-pill">${temps.length}套</span></div>${temps.length===0?'<div class="empty-state"><div class="empty-icon">📒</div><p>还没有穿搭模板~</p></div>':temps.map(t=>`<div class="list-item"><div class="item-info"><div class="item-title">👗 ${escapeHtml(t.items.join(' + ')||'未命名')}</div><div class="item-meta">${escapeHtml(t.date)} · ${escapeHtml(t.scene)}</div></div><div class="item-actions"><button class="btn btn-outline btn-xs" onclick="viewTemplate('${t.id}')">查看</button><button class="btn btn-danger btn-xs" onclick="deleteTemplate('${t.id}')">删除</button></div></div>`).join('')}</div>`;
 }
-function viewTemplate(id){const t=AppData.outfitTemplates.find(x=>x.id===id);if(!t)return;showModal('📒 穿搭模板',`<p><strong>搭配：</strong>${escapeHtml(t.items.join(' + '))}</p><p><strong>场景：</strong>${escapeHtml(t.scene)}</p><p><strong>日期：</strong>${escapeHtml(t.date)}</p>`,()=>true);}
+function viewTemplate(id){const t=AppData.outfitTemplates.find(x=>x.id===id);if(!t)return;const imgs=(t.imgs||[]).map(src=>`<img src="${src}" style="width:62px;height:62px;object-fit:cover;border-radius:10px;margin:4px;border:1px solid var(--pink-200);">`).join('');showModal('📒 穿搭模板',`${imgs?`<div style="display:flex;flex-wrap:wrap;justify-content:center;margin-bottom:12px;">${imgs}</div>`:'<p style="color:var(--text-light);margin-bottom:10px;">（暂无照片）</p>'}<p><strong>搭配：</strong>${escapeHtml(t.items.join(' + '))}</p><p><strong>场景：</strong>${escapeHtml(t.scene)}</p><p><strong>日期：</strong>${escapeHtml(t.date)}</p>`,()=>true);}
 function deleteTemplate(id){AppData.outfitTemplates=AppData.outfitTemplates.filter(t=>t.id!==id);saveData(AppData);renderTemplates();showToast('已删除');}
 </script>
 
