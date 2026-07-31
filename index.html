@@ -349,6 +349,10 @@ body {
 .btn-ghost { background: rgba(255,255,255,0.6); color: var(--accent); border: 1.5px dashed var(--pink-300); }
 .btn-ghost:hover { background: #fff; border-color: var(--accent); }
 .closet-toggle { transition: all 0.2s; }
+.season-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+.season-chip{display:inline-block;padding:5px 14px;border-radius:16px;font-size:13px;cursor:pointer;background:#f3f0f5;color:var(--text-secondary);border:1.5px solid transparent;user-select:none;transition:all .15s;}
+.season-chip:hover{background:#ffe8ee;}
+.season-chip.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 6px rgba(255,122,158,0.35);}
 
 /* 减脂方案历史：可展开详情 */
 details.plan-history { background: #fff8fb; border: 1px solid var(--pink-200); border-radius: var(--radius-md); padding: 10px 12px; margin-bottom: 10px; }
@@ -1252,6 +1256,7 @@ let currentClosetItems=[];            // 当前衣架列表（用于折叠/展�
 function renderCloset(){
   const container=document.getElementById('wardrobeContent');
   const items=AppData.wardrobe.filter(w=>!w.archived);
+  closetCatFilter='';closetSeasonFilter=[];   // 进入衣架重置筛选状态
   wardrobeExpanded=false;             // 进入衣架默认折叠，只显示最新3件
   currentClosetItems=items;
   container.innerHTML=`
@@ -1268,17 +1273,14 @@ function renderCloset(){
       <div class="form-row">
         <div class="form-group">
           <label>🔍 筛选品类</label>
-          <select class="select" id="catFilter" onchange="filterCloset(this.value,document.getElementById('seasonFilter')?.value||'')">
+          <select class="select" id="catFilter" onchange="closetCatFilter=this.value;filterCloset()">
             <option value="">🌸 全部品类</option>
             ${['上衣','T恤','衬衫','毛衣','卫衣','背心吊带','风衣','大衣','夹克','羽绒服','西装','开衫','防晒衣','半身裙','连衣裙','牛仔裤','长裤','短裤','打底裤','运动装','内衣家居','泳衣','特色服饰'].map(c=>`<option value="${c}">${c}</option>`).join('')}
           </select>
         </div>
         <div class="form-group">
-          <label>🍂 筛选季节</label>
-          <select class="select" id="seasonFilter" onchange="filterCloset(document.getElementById('catFilter')?.value||'',this.value)">
-            <option value="">🌈 全部季节</option>
-            ${['春','夏','秋','冬'].map(s=>`<option value="${s}">${s}季</option>`).join('')}
-          </select>
+          <label>🍂 筛选季节（可多选）</label>
+          <div id="seasonFilterChips" class="season-chips">${['春','夏','秋','冬'].map(s=>`<span class="season-chip" data-s="${s}" onclick="toggleFilterSeason('${s}',this)">${s}</span>`).join('')}</div>
         </div>
       </div>
       <div class="wardrobe-grid" id="wardrobeGrid"></div>
@@ -1320,13 +1322,20 @@ function toggleClosetExpand(){
   wardrobeExpanded=!wardrobeExpanded;
   renderWardrobeGrid(currentClosetItems);
 }
-function filterCloset(cat,season){
+let closetCatFilter='';
+let closetSeasonFilter=[];
+function filterCloset(){
   let items=AppData.wardrobe.filter(w=>!w.archived);
-  if(cat)items=items.filter(i=>i.category===cat);
-  if(season)items=items.filter(i=>Array.isArray(i.season)?i.season.includes(season):i.season===season);
+  if(closetCatFilter)items=items.filter(i=>i.category===closetCatFilter);
+  if(closetSeasonFilter.length)items=items.filter(i=>(seasonToArr(i.season)).some(s=>closetSeasonFilter.includes(s)));
   wardrobeExpanded=true;          // 筛选/搜索时直接展开全部结果
   currentClosetItems=items;
   renderWardrobeGrid(items);
+}
+function toggleFilterSeason(s,el){
+  el.classList.toggle('active');
+  closetSeasonFilter=[...document.querySelectorAll('#seasonFilterChips .season-chip.active')].map(c=>c.dataset.s);
+  filterCloset();
 }
 
 let pendingBatchItems=[];
@@ -1379,7 +1388,7 @@ async function handleBatchFiles(files){
       <img src="${item.image}">
       <div class="info"><div class="name">${escapeHtml(item.name)}</div><div class="conf">🤖 置信度 ${item.confidence}%</div></div>
       <select class="select" style="width:auto;min-width:80px;" onchange="pendingBatchItems[${idx}].category=this.value"><option value="${item.category||''}" ${item.category?'':'selected'}>🤖未识别</option>${cats.map(c=>`<option ${item.category===c?'selected':''}>${c}</option>`).join('')}</select>
-      <span id="bs_${idx}" style="display:inline-flex;gap:2px;flex-wrap:wrap;">${['春','夏','秋','冬'].map(s=>`<label style="font-size:11px;margin-right:3px;cursor:pointer;"><input type="checkbox" value="${s}" ${(item.season||[]).includes(s)?'checked':''} onchange="pendingBatchItems[${idx}].season=[...document.querySelectorAll('#bs_${idx} input:checked')].map(c=>c.value)">${s}</label>`).join('')}</span>
+      <span id="bs_${idx}" class="season-chips">${['春','夏','秋','冬'].map(s=>`<span class="season-chip ${(item.season||[]).includes(s)?'active':''}" onclick="toggleSeasonChip(${idx},this)">${s}</span>`).join('')}</span>
       <input class="input" style="width:auto;min-width:100px;" value="${escapeHtml(item.name)}" onchange="pendingBatchItems[${idx}].name=this.value">
       <button class="btn btn-danger btn-xs" onclick="pendingBatchItems.splice(${idx},1);this.closest('.ai-result-row').remove();updateBatchCount()">✕</button>
     </div>`).join('')}`;
@@ -1389,10 +1398,15 @@ function updateBatchCount(){
   const btn=document.querySelector('.confirm-btn');
   if(btn)btn.textContent=`💾 全部导入 (${pendingBatchItems.length}件)`;
 }
+function toggleSeasonChip(idx,el){
+  el.classList.toggle('active');
+  const box=document.getElementById('bs_'+idx);
+  pendingBatchItems[idx].season=box?[...box.querySelectorAll('.season-chip.active')].map(c=>c.textContent.trim()):[];
+}
 
 function addClothing(){
   const cats=['上衣','T恤','衬衫','毛衣','卫衣','背心吊带','风衣','大衣','夹克','羽绒服','西装','开衫','防晒衣','半身裙','连衣裙','牛仔裤','长裤','短裤','打底裤','运动装','内衣家居','泳衣','特色服饰'];
-  showModal('➕ 手动添加衣物',`<div class="form-group"><label>📛 名称</label><input class="input" id="newClName" placeholder="如：白色简约衬衫"></div><div class="form-row"><div class="form-group"><label>🏷️ 品类</label><select class="select" id="newClCat"><option value="">🤖未识别</option>${cats.map(c=>`<option>${c}</option>`).join('')}</select></div><div class="form-group"><label>🍂 季节（可多选）</label><span id="newClSeasonChecks" style="display:inline-flex;gap:8px;">${['春','夏','秋','冬'].map(s=>`<label style="font-size:13px;cursor:pointer;"><input type="checkbox" value="${s}"> ${s}</label>`).join('')}</span></div></div><div class="form-group"><label>🎨 风格</label><input class="input" id="newClStyle" placeholder="如：休闲、商务"></div><div class="form-group"><label>📝 备注</label><textarea class="textarea" id="newClNote"></textarea></div><div class="form-group"><label>🖼️ 图片URL</label><input class="input" id="newClImg"></div><div class="upload-zone" id="singleUploadZone" style="padding:18px;"><span style="font-size:24px;">📤</span> 点击上传图片</div><input type="file" id="singleFileInput" accept="image/*" style="display:none;">`,async(overlay)=>{
+  showModal('➕ 手动添加衣物',`<div class="form-group"><label>📛 名称</label><input class="input" id="newClName" placeholder="如：白色简约衬衫"></div><div class="form-row"><div class="form-group"><label>🏷️ 品类</label><select class="select" id="newClCat"><option value="">🤖未识别</option>${cats.map(c=>`<option>${c}</option>`).join('')}</select></div><div class="form-group"><label>🍂 季节（可多选，点击选择）</label><div id="newClSeasonChips" class="season-chips">${['春','夏','秋','冬'].map(s=>`<span class="season-chip" data-s="${s}">${s}</span>`).join('')}</div></div></div><div class="form-group"><label>🎨 风格</label><input class="input" id="newClStyle" placeholder="如：休闲、商务"></div><div class="form-group"><label>📝 备注</label><textarea class="textarea" id="newClNote"></textarea></div><div class="form-group"><label>🖼️ 图片URL</label><input class="input" id="newClImg"></div><div class="upload-zone" id="singleUploadZone" style="padding:18px;"><span style="font-size:24px;">📤</span> 点击上传图片</div><input type="file" id="singleFileInput" accept="image/*" style="display:none;">`,async(overlay)=>{
     const name=overlay.querySelector('#newClName').value.trim();
     if(!name){showToast('请输入名称','error');return false;}
     const id=genId();
@@ -1408,7 +1422,7 @@ function addClothing(){
       imageId='img_'+id;
       await saveImage(imageId, urlInput);
     }
-    AppData.wardrobe.push({id,name,category:overlay.querySelector('#newClCat').value||'上衣',season:(()=>{const v=[...overlay.querySelectorAll('#newClSeasonChecks input:checked')].map(c=>c.value);return v.length?v:['春'];})(),style:overlay.querySelector('#newClStyle').value,note:overlay.querySelector('#newClNote').value,imageId,image:uploaded||urlInput||'',archived:false,createdAt:today()});
+    AppData.wardrobe.push({id,name,category:overlay.querySelector('#newClCat').value||'上衣',season:(()=>{const v=[...overlay.querySelectorAll('#newClSeasonChips .season-chip.active')].map(c=>c.dataset.s);return v.length?v:['春'];})(),style:overlay.querySelector('#newClStyle').value,note:overlay.querySelector('#newClNote').value,imageId,image:uploaded||urlInput||'',archived:false,createdAt:today()});
     saveData(AppData);cloudSaveForce();renderWardrobe();showToast('✨ 衣物添加成功！');
   });
   setTimeout(()=>{
@@ -1420,13 +1434,13 @@ function addClothing(){
       const file=e.target.files[0];if(!file)return;
       const dataUrl=await compressImage(file);
       const r=aiRecognize(file.name);
+      const overlay=document.querySelector('.modal-overlay');
       const nameEl=document.getElementById('newClName');const catEl=document.getElementById('newClCat');const styleEl=document.getElementById('newClStyle');const imgEl=document.getElementById('newClImg');
       if(nameEl&&!nameEl.value)nameEl.value=r.name;
       if(catEl)catEl.value=r.category;
-      if(overlay)overlay.querySelectorAll('#newClSeasonChecks input').forEach(c=>c.checked=(r.season||[]).includes(c.value));
+      if(overlay)overlay.querySelectorAll('#newClSeasonChips .season-chip').forEach(c=>c.classList.toggle('active',(r.season||[]).includes(c.dataset.s)));
       if(styleEl&&!styleEl.value)styleEl.value=r.style;
       if(imgEl)imgEl.value=dataUrl;
-      const overlay=document.querySelector('.modal-overlay');
       if(overlay)overlay._uploadedImage=dataUrl;
       zone.innerHTML=`<span style="font-size:24px;">✅</span> 已上传 · AI建议: ${r.category}`;
     };
@@ -1450,10 +1464,10 @@ function viewClothing(id){
 function editClothing(id){
   const item=AppData.wardrobe.find(w=>w.id===id);if(!item)return;
   const cats=['上衣','T恤','衬衫','毛衣','卫衣','背心吊带','风衣','大衣','夹克','羽绒服','西装','开衫','防晒衣','半身裙','连衣裙','牛仔裤','长裤','短裤','打底裤','运动装','内衣家居','泳衣','特色服饰'];
-  showModal('✏️ 编辑衣物',`<div class="form-group"><label>📛 名称</label><input class="input" id="editName" value="${escapeHtml(item.name)}"></div><div class="form-row"><div class="form-group"><label>🏷️ 品类</label><select class="select" id="editCat"><option value="">🤖未识别</option>${cats.map(c=>`<option ${item.category===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="form-group"><label>🍂 季节（可多选）</label><span id="editSeasonChecks" style="display:inline-flex;gap:8px;">${['春','夏','秋','冬'].map(s=>`<label style="font-size:13px;cursor:pointer;"><input type="checkbox" value="${s}" ${(seasonToArr(item.season)).includes(s)?'checked':''}> ${s}</label>`).join('')}</span></div></div><div class="form-group"><label>🎨 风格</label><input class="input" id="editStyle" value="${escapeHtml(item.style||'')}"></div><div class="form-group"><label>📝 备注</label><textarea class="textarea" id="editNote">${escapeHtml(item.note||'')}</textarea></div><div class="form-group"><label>🖼️ 图片URL</label><input class="input" id="editImg" value="${escapeHtml(item.image||'')}"></div>`,(overlay)=>{
+  showModal('✏️ 编辑衣物',`<div class="form-group"><label>📛 名称</label><input class="input" id="editName" value="${escapeHtml(item.name)}"></div><div class="form-row"><div class="form-group"><label>🏷️ 品类</label><select class="select" id="editCat"><option value="">🤖未识别</option>${cats.map(c=>`<option ${item.category===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="form-group"><label>🍂 季节（可多选，点击选择）</label><div id="editSeasonChips" class="season-chips">${['春','夏','秋','冬'].map(s=>`<span class="season-chip ${seasonToArr(item.season).includes(s)?'active':''}" data-s="${s}">${s}</span>`).join('')}</div></div></div><div class="form-group"><label>🎨 风格</label><input class="input" id="editStyle" value="${escapeHtml(item.style||'')}"></div><div class="form-group"><label>📝 备注</label><textarea class="textarea" id="editNote">${escapeHtml(item.note||'')}</textarea></div><div class="form-group"><label>🖼️ 图片URL</label><input class="input" id="editImg" value="${escapeHtml(item.image||'')}"></div>`,(overlay)=>{
     item.name=overlay.querySelector('#editName').value.trim()||item.name;
     item.category=overlay.querySelector('#editCat').value||'上衣';
-    const ev=[...overlay.querySelectorAll('#editSeasonChecks input:checked')].map(c=>c.value);
+    const ev=[...overlay.querySelectorAll('#editSeasonChips .season-chip.active')].map(c=>c.dataset.s);
     item.season=ev.length?ev:['春'];
     item.style=overlay.querySelector('#editStyle').value;
     item.note=overlay.querySelector('#editNote').value;
