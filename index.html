@@ -2005,6 +2005,7 @@ function manageMilkTeaMenu(){
 }
 function mtItemForm(idx){
   const m=idx!=null?AppData.milkTeaMenu[idx]:null;
+  let editImage=(m&&m.image)||'';
   const content=`
     <div class="upload-zone" id="mtUploadZone" style="margin-bottom:12px;padding:16px;">
       <div style="font-size:30px;">📸</div>
@@ -2024,14 +2025,12 @@ function mtItemForm(idx){
   showModal(idx!=null?'✏️ 编辑奶茶':'➕ 新增奶茶',content,(overlay)=>{
     const name=overlay.querySelector('#mtName').value.trim();
     if(!name){showToast('请输入名称','error');return false;}
-    const data={brand:overlay.querySelector('#mtBrand').value.trim(),name,sweetness:overlay.querySelector('#mtSweet').value,ice:overlay.querySelector('#mtIce').value,topping:overlay.querySelector('#mtTopping').value,image:overlay._mtImage||''};
+    const data={brand:overlay.querySelector('#mtBrand').value.trim(),name,sweetness:overlay.querySelector('#mtSweet').value,ice:overlay.querySelector('#mtIce').value,topping:overlay.querySelector('#mtTopping').value,image:editImage};
     if(idx!=null)AppData.milkTeaMenu[idx]=data;else AppData.milkTeaMenu.push(data);
     saveData(AppData);renderMilkTea();showToast(idx!=null?'✅ 已更新':'✨ 已添加');
     document.querySelectorAll('.modal-overlay').forEach(o=>o.remove());
     setTimeout(manageMilkTeaMenu,0);
   });
-  const overlay=document.querySelector('.modal-overlay');
-  if(overlay)overlay._mtImage=(m&&m.image)||'';
   setTimeout(()=>{
     const zone=document.getElementById('mtUploadZone');
     const input=document.getElementById('mtImgInput');
@@ -2043,11 +2042,11 @@ function mtItemForm(idx){
     input.onchange=async e=>{
       const file=e.target.files[0];if(!file)return;
       const dataUrl=await compressImage(file,300,0.6);
-      if(overlay)overlay._mtImage=dataUrl;
+      editImage=dataUrl;
       show.src=dataUrl;preview.style.display='block';
       zone.innerHTML='<div style="font-size:22px;">✅</div><div style="font-size:12px;">已上传，可点击重新选择</div>';
     };
-    if(clear)clear.onclick=()=>{if(overlay)overlay._mtImage='';show.src='';preview.style.display='none';zone.innerHTML='<div style="font-size:30px;">📸</div><div style="font-weight:600;margin-top:4px;">上传奶茶图片</div><div style="font-size:11px;color:var(--text-light);">点击选择，可选</div>';};
+    if(clear)clear.onclick=()=>{editImage='';show.src='';preview.style.display='none';zone.innerHTML='<div style="font-size:30px;">📸</div><div style="font-weight:600;margin-top:4px;">上传奶茶图片</div><div style="font-size:11px;color:var(--text-light);">点击选择，可选</div>';};
   },80);
 }
 function removeMilkTeaItem(i){AppData.milkTeaMenu.splice(i,1);saveData(AppData);renderMilkTea();document.querySelector('.modal-overlay')?.remove();manageMilkTeaMenu();showToast('已删除');}
