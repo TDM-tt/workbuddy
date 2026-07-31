@@ -1142,6 +1142,18 @@ function cloudSave() {
   }, 3000);
 }
 
+// 立即同步（无防抖）：导入图片等重要操作后立刻上传云端，避免 3 秒防抖窗口内刷新导致图片丢失
+async function cloudSaveForce(){
+  try{
+    const payload = {...AppData, _syncedAt: new Date().toISOString()};
+    await fetch(`${SB_URL}/rest/v1/workbuddy_data`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,'Prefer':'resolution=merge-duplicates'},
+      body: JSON.stringify({id:1, data:payload, updated_at:new Date().toISOString()})
+    });
+  }catch(e){}
+}
+
 // 覆盖原有 saveData，加入云端同步
 const _originalSaveData = saveData;
 saveData = function(data) { _originalSaveData(data); cloudSave(); };
@@ -1301,7 +1313,7 @@ function batchUploadClothing(){
       await saveImage(imageId, item.image);
       AppData.wardrobe.push({id,name:item.name,category:item.category,season:item.season,style:item.style,note:item.note||'',imageId,image:item.image||'',archived:false,createdAt:today()});
     }
-    saveData(AppData);renderWardrobe();showToast(`✨ AI已识别并导入 ${pendingBatchItems.length} 件衣物！`);
+    saveData(AppData);cloudSaveForce();renderWardrobe();showToast(`✨ AI已识别并导入 ${pendingBatchItems.length} 件衣物！`);
   },{wide:true,confirmText:`💾 全部导入 (${pendingBatchItems.length}件)`});
 
   setTimeout(()=>{
@@ -1362,7 +1374,7 @@ function addClothing(){
       await saveImage(imageId, urlInput);
     }
     AppData.wardrobe.push({id,name,category:overlay.querySelector('#newClCat').value,season:overlay.querySelector('#newClSeason').value,style:overlay.querySelector('#newClStyle').value,note:overlay.querySelector('#newClNote').value,imageId,image:uploaded||urlInput||'',archived:false,createdAt:today()});
-    saveData(AppData);renderWardrobe();showToast('✨ 衣物添加成功！');
+    saveData(AppData);cloudSaveForce();renderWardrobe();showToast('✨ 衣物添加成功！');
   });
   setTimeout(()=>{
     const zone=document.getElementById('singleUploadZone');
@@ -2468,39 +2480,38 @@ function init(){
       {id:genId(),title:'月度阅读目标',targetDate:new Date(new Date().getFullYear(),new Date().getMonth()+1,1).toISOString().slice(0,16),milestones:['读完2本书'],pinned:false,createdAt:today()},
     ];
   }
-  saveData(AppData);
+  // ⚠️ 只存本地、不立即上传云端 —— 避免用本地空默认数据覆盖云端真实数据
+  _originalSaveData(AppData);
 
   // 初始化云端同步UI
   updateCloudUI();
 
-  // 启动时尝试从云端拉取数据
+  // 启动后先拉云端，再决定如何保存（防止默认空图覆盖云端）
   cloudLoad().then(async cloudData => {
     if (cloudData && cloudData._syncedAt) {
-      // 云端有数据：合并（云端优先）
       const localTime = AppData._syncedAt ? new Date(AppData._syncedAt).getTime() : 0;
       const cloudTime = cloudData._syncedAt ? new Date(cloudData._syncedAt).getTime() : 0;
-
-      // 删除元信息后合并
       const cleanCloud = {...cloudData};
       delete cleanCloud._syncedAt;
       delete cleanCloud._createdAt;
-
       if (cloudTime > localTime) {
-        // 云端数据更新，采用云端
+        // 云端更新：采用云端（含图片）
         AppData = {...AppData, ...cleanCloud};
-        saveData(AppData);
-        console.log('☁️ 已从云端加载最新数据');
       }
+      // 无论云端还是本地优先，都保存并上传最终数据
+      saveData(AppData);
+    } else {
+      // 云端无数据：首次使用，上传本地
+      saveData(AppData);
     }
     // 把本地 IndexedDB 中的图片补进云端，保证跨设备可显示
     await backfillCloudImages();
-  }).catch(() => {});
-
-  // 设置中文日期
-  document.getElementById('brandDate').textContent = getCnDate();
-
-  // 默认加载
-  switchModule('wardrobe');
+    document.getElementById('brandDate').textContent = getCnDate();
+    switchModule('wardrobe');
+  }).catch(() => {
+    document.getElementById('brandDate').textContent = getCnDate();
+    switchModule('wardrobe');
+  });
 
   // 可见性恢复 → 同时拉取云端最新数据
   document.addEventListener('visibilitychange',()=>{
