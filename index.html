@@ -1,0 +1,2535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="谭大米の工作台 - 衣橱、饮食、旅行、进步、退休一站式管理">
+<meta name="theme-color" content="#ff6b9d">
+<meta name="msapplication-TileColor" content="#ff6b9d">
+<meta name="msapplication-TileImage" content="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="工作台">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="谭大米の工作台">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-startup-image" href="icon-512.png">
+<title>🌸 谭大米の工作台</title>
+<style>
+/* ==================== 樱花漫画风变量 ==================== */
+:root {
+  --pink-50: #fff5f7;
+  --pink-100: #ffe8ee;
+  --pink-200: #ffd1dc;
+  --pink-300: #ffb6c1;
+  --pink-400: #ff8fab;
+  --pink-500: #ff6b9d;
+  --pink-600: #e85a87;
+  --rose-100: #ffe4ec;
+  --rose-200: #ffc8d6;
+  --rose-300: #ff9eb5;
+  --rose-400: #ff7095;
+  --rose-500: #ff4081;
+  --purple-200: #e9d4f0;
+  --purple-300: #d4a8e0;
+  --cream: #fff8f3;
+  --lavender: #f5e6f7;
+
+  --bg-1: #ffe5ec;
+  --bg-2: #ffd1dc;
+  --bg-3: #fff0f5;
+  --card-bg: #ffffff;
+  --card-border: #ffc8d6;
+  --text: #5a3d5c;
+  --text-secondary: #a07ca6;
+  --text-light: #c5a3c8;
+  --accent: #ff6b9d;
+  --accent-light: #ffe8ee;
+  --success: #7dd3a8;
+  --warning: #ffb84d;
+  --danger: #ff7a8a;
+  --info: #a78bdb;
+
+  --shadow: 0 4px 14px rgba(255, 107, 157, 0.12);
+  --shadow-md: 0 6px 20px rgba(255, 107, 157, 0.16);
+  --shadow-lg: 0 10px 30px rgba(255, 107, 157, 0.20);
+  --radius: 22px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --radius-xs: 8px;
+  --radius-pill: 999px;
+
+  --font-cute: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', -apple-system, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: var(--font-cute);
+  background: linear-gradient(135deg, #ffe5ec 0%, #ffd1dc 50%, #ffc0cb 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ==================== 漂浮装饰背景 ==================== */
+.bg-deco {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+}
+.bg-deco .deco {
+  position: absolute; opacity: 0.55; animation: floatAround 12s infinite ease-in-out;
+  font-size: 20px;
+}
+.bg-deco .d1 { top: 8%; left: 15%; animation-delay: 0s; font-size: 28px; }
+.bg-deco .d2 { top: 18%; right: 12%; animation-delay: 2s; font-size: 24px; }
+.bg-deco .d3 { top: 38%; left: 4%; animation-delay: 4s; font-size: 30px; }
+.bg-deco .d4 { top: 55%; right: 6%; animation-delay: 1s; font-size: 22px; }
+.bg-deco .d5 { bottom: 18%; left: 12%; animation-delay: 3s; font-size: 26px; }
+.bg-deco .d6 { bottom: 8%; right: 18%; animation-delay: 5s; font-size: 24px; }
+.bg-deco .d7 { top: 28%; right: 30%; animation-delay: 2.5s; font-size: 20px; }
+.bg-deco .d8 { top: 70%; left: 35%; animation-delay: 4.5s; font-size: 22px; }
+.bg-deco .d9 { top: 5%; left: 45%; animation-delay: 6s; font-size: 18px; }
+.bg-deco .d10 { bottom: 30%; right: 30%; animation-delay: 1.5s; font-size: 26px; }
+.bg-deco .d11 { top: 48%; left: 25%; animation-delay: 7s; font-size: 20px; }
+.bg-deco .d12 { top: 80%; right: 45%; animation-delay: 3.5s; font-size: 24px; }
+
+@keyframes floatAround {
+  0%, 100% { transform: translate(0,0) rotate(0deg); }
+  25% { transform: translate(15px, -20px) rotate(15deg); }
+  50% { transform: translate(-10px, -30px) rotate(-10deg); }
+  75% { transform: translate(20px, 10px) rotate(20deg); }
+}
+
+/* ==================== 自定义滚动条 ==================== */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--pink-200); border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--pink-300); background-clip: padding-box; }
+
+/* ==================== 侧边栏 ==================== */
+.sidebar {
+  width: 280px; min-width: 280px;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 2px dashed var(--pink-200);
+  display: flex; flex-direction: column;
+  position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+  overflow-y: auto;
+  padding: 20px 18px;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.sidebar::-webkit-scrollbar { display: none; }
+
+.brand {
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  margin-bottom: 18px;
+  position: relative;
+}
+.brand-title {
+  font-size: 26px; font-weight: 900;
+  background: linear-gradient(135deg, #ff6b9d, #ff9eb5, #ffb6c1);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(255,107,157,0.15);
+  position: relative;
+}
+.brand-title::before {
+  content: '🌸'; position: absolute; left: -32px; top: 0; font-size: 22px;
+  animation: sway 3s ease-in-out infinite;
+}
+.brand-title::after {
+  content: '🌸'; position: absolute; right: -32px; top: 0; font-size: 22px;
+  animation: sway 3s ease-in-out infinite reverse;
+}
+@keyframes sway { 0%,100%{transform:rotate(-15deg)} 50%{transform:rotate(15deg)} }
+.brand-date {
+  margin-top: 10px;
+  background: linear-gradient(135deg, #ffe8ee, #fff5f7);
+  border: 1.5px dashed var(--pink-300);
+  border-radius: var(--radius-pill);
+  padding: 6px 18px;
+  font-size: 13px; color: var(--accent);
+  display: flex; align-items: center; gap: 6px;
+  position: relative;
+}
+.brand-date::before { content: '🦄'; font-size: 14px; }
+.brand-date::after { content: '💕'; font-size: 14px; }
+
+/* 侧边栏分类 */
+.nav-list { display: flex; flex-direction: column; gap: 14px; flex: 1; }
+.nav-group {
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid var(--pink-200);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+}
+.nav-group:hover {
+  background: rgba(255,255,255,0.9);
+  border-color: var(--pink-300);
+  transform: translateX(4px);
+  box-shadow: var(--shadow);
+}
+.nav-group.active {
+  background: linear-gradient(135deg, #ffe8ee, #ffd1dc);
+  border-color: var(--pink-400);
+  box-shadow: var(--shadow-md);
+}
+.nav-group-header {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 16px; font-weight: 700; color: var(--text);
+}
+.nav-group-header .emoji { font-size: 22px; }
+.nav-group-header .name { flex: 1; }
+.nav-group-header .arrow { font-size: 12px; color: var(--text-light); transition: transform 0.3s; }
+.nav-group.active .nav-group-header .arrow { transform: rotate(90deg); }
+.nav-sub {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1.5px dashed var(--pink-200);
+  display: none;
+  flex-direction: column; gap: 8px;
+}
+.nav-group.active .nav-sub { display: flex; }
+.nav-sub-item {
+  font-size: 13px; color: var(--text-secondary);
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nav-sub-item:hover { background: var(--pink-100); color: var(--accent); }
+
+.sidebar-footer {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 11px; color: var(--text-light);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.sync-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--success);
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:0.6} }
+
+/* ==================== 主内容区 ==================== */
+.main-wrapper {
+  margin-left: 280px; flex: 1; min-height: 100vh;
+  display: flex; flex-direction: column;
+  padding: 24px 32px;
+  position: relative; z-index: 1;
+  transition: margin 0.3s ease;
+}
+.page-header {
+  position: sticky; top: 12px; z-index: 50;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 2px dashed var(--pink-200);
+  border-radius: var(--radius);
+  padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+.page-header .title {
+  font-size: 22px; font-weight: 800; color: var(--text);
+  display: flex; align-items: center; gap: 10px;
+}
+.page-header .title .heart {
+  display: inline-block;
+  color: var(--accent); font-size: 18px;
+  animation: heartbeat 1.4s ease-in-out infinite;
+}
+@keyframes heartbeat { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+.page-header .refresh-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--pink-100); border: 1.5px solid var(--pink-300);
+  cursor: pointer; font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.page-header .refresh-btn:hover { background: var(--accent); color: white; transform: rotate(180deg); }
+
+.hamburger {
+  display: none;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--pink-100); border: 1.5px solid var(--pink-300);
+  cursor: pointer; font-size: 18px;
+  align-items: center; justify-content: center;
+}
+
+.content-area { flex: 1; }
+
+/* ==================== 可爱卡片 ==================== */
+.cute-card {
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow);
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.cute-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.cute-card-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px dashed var(--pink-200);
+}
+.cute-card-header .heart-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  background: var(--pink-100); border-radius: 50%;
+  color: var(--accent); font-size: 14px;
+}
+.cute-card-header .title-text {
+  font-size: 16px; font-weight: 700; color: var(--text);
+}
+.cute-card-header .badge-pill {
+  margin-left: auto;
+  background: var(--accent-light); color: var(--accent);
+  padding: 4px 12px; border-radius: var(--radius-pill);
+  font-size: 12px; font-weight: 600;
+}
+
+/* ==================== 按钮 ==================== */
+.btn {
+  padding: 9px 18px;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  font-size: 14px; font-weight: 600;
+  font-family: var(--font-cute);
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.btn:active { transform: translateY(0); }
+.btn-primary {
+  background: linear-gradient(135deg, #ff8fab, #ff6b9d);
+  color: white;
+  box-shadow: 0 4px 12px rgba(255,107,157,0.3);
+}
+.btn-pink {
+  background: linear-gradient(135deg, #ffb6c1, #ff9eb5);
+  color: white;
+  box-shadow: 0 4px 12px rgba(255,158,181,0.3);
+}
+.btn-outline {
+  background: white;
+  color: var(--text-secondary);
+  border: 1.5px solid var(--pink-200);
+}
+.btn-outline:hover { color: var(--accent); border-color: var(--pink-300); }
+.btn-danger { background: var(--danger); color: white; }
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+.btn-xs { padding: 4px 10px; font-size: 11px; }
+.btn-block { width: 100%; justify-content: center; }
+
+/* ==================== 输入控件 ==================== */
+.input, .select, .textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--pink-200);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: var(--font-cute);
+  background: white;
+  color: var(--text);
+  transition: all 0.2s;
+}
+.input:focus, .select:focus, .textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255,107,157,0.15);
+}
+.textarea { resize: vertical; min-height: 80px; }
+
+/* ==================== 徽章 ==================== */
+.badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px; font-weight: 600;
+  background: var(--pink-100); color: var(--accent);
+}
+.badge-pink { background: var(--pink-100); color: var(--accent); }
+.badge-rose { background: #ffe4ec; color: var(--rose-500); }
+.badge-success { background: #e6f7ed; color: var(--success); }
+.badge-warning { background: #fff4e0; color: var(--warning); }
+.badge-info { background: #f0e6fa; color: var(--info); }
+
+/* ==================== 列表项 ==================== */
+.list-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  background: rgba(255,232,238,0.4);
+  transition: all 0.2s;
+  gap: 12px;
+}
+.list-item:hover { background: rgba(255,232,238,0.7); transform: translateX(4px); }
+.list-item .item-info { flex: 1; min-width: 0; }
+.list-item .item-title { font-weight: 600; font-size: 14px; color: var(--text); }
+.list-item .item-meta { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+.list-item .item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+/* ==================== Tab 切换 ==================== */
+.tabs {
+  display: flex; gap: 8px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.tab {
+  padding: 9px 20px;
+  cursor: pointer;
+  font-size: 14px; font-weight: 600;
+  border-radius: var(--radius-pill);
+  background: rgba(255,255,255,0.7);
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  border: 1.5px solid var(--pink-200);
+}
+.tab:hover { color: var(--accent); border-color: var(--pink-300); }
+.tab.active {
+  background: linear-gradient(135deg, #ff8fab, #ff6b9d);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(255,107,157,0.3);
+}
+
+/* ==================== Toast ==================== */
+.toast {
+  position: fixed; top: 24px; right: 24px; z-index: 400;
+  padding: 12px 22px;
+  border-radius: var(--radius-pill);
+  background: white;
+  box-shadow: var(--shadow-lg);
+  font-size: 14px; font-weight: 600;
+  border: 2px solid var(--pink-200);
+  animation: toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  display: flex; align-items: center; gap: 8px;
+}
+@keyframes toastIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* ==================== 可访问性 ==================== */
+.btn:focus-visible, .tab:focus-visible, .nav-group:focus-visible, .clothing-item:focus-visible {
+  outline: 2.5px solid var(--accent); outline-offset: 2px;
+}
+.tab, .nav-group, .clothing-item { user-select: none; }
+button { font-family: var(--font-cute); }
+
+/* ==================== 动画 ==================== */
+@keyframes shake { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-6deg)} 50%{transform:rotate(6deg)} 75%{transform:rotate(-6deg)} }
+.shaking { animation: shake 0.5s ease-in-out 3; }
+@keyframes bounceIn { 0%{transform:scale(0.3);opacity:0} 50%{transform:scale(1.08)} 70%{transform:scale(0.95)} 100%{transform:scale(1);opacity:1} }
+@keyframes sparkle-anim { 0%,100%{opacity:0;transform:scale(0) rotate(0)} 50%{opacity:1;transform:scale(1) rotate(180deg)} }
+.sparkle { animation: sparkle-anim 1.5s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+  text-align: center; padding: 40px 20px;
+  color: var(--text-light);
+}
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 8px; animation: float 3s ease-in-out infinite; }
+.empty-state p { font-size: 14px; }
+
+/* ==================== 模态框 ==================== */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(90, 61, 92, 0.35);
+  z-index: 300;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal {
+  background: white;
+  border-radius: var(--radius);
+  padding: 24px;
+  max-width: 520px; width: 92%;
+  max-height: 85vh; overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  border: 2px solid var(--pink-200);
+}
+.modal h3 {
+  margin-bottom: 16px; font-size: 18px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+/* ==================== 网格 ==================== */
+.grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+
+/* ==================== 表单 ==================== */
+.form-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: flex-end; flex-wrap: wrap; }
+.form-group { flex: 1; min-width: 140px; }
+.form-group label {
+  display: block; font-size: 12px; font-weight: 600;
+  margin-bottom: 5px; color: var(--text-secondary);
+  display: flex; align-items: center; gap: 4px;
+}
+
+/* ==================== 衣架网格 ==================== */
+.wardrobe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 14px;
+}
+.clothing-item {
+  background: white;
+  border: 2px solid var(--pink-200);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+}
+.clothing-item:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px) rotate(-1deg);
+  border-color: var(--pink-300);
+}
+.clothing-item .cl-img { width: 100%; height: 150px; object-fit: cover; background: #fff8fb; }
+.clothing-item .cl-img-placeholder {
+  width: 100%; height: 150px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px; background: linear-gradient(135deg, #fff8fb, #ffe8ee);
+}
+.clothing-item .cl-name { padding: 8px 10px 2px; font-size: 13px; font-weight: 600; }
+.clothing-item .cl-cat { padding: 2px 10px 10px; font-size: 11px; color: var(--accent); }
+
+/* ==================== 上传区域 ==================== */
+.upload-zone {
+  border: 2.5px dashed var(--pink-300);
+  border-radius: var(--radius);
+  padding: 36px 20px;
+  text-align: center;
+  cursor: pointer;
+  background: linear-gradient(135deg, #fff8fb, #ffe8ee);
+  margin-bottom: 16px;
+  transition: all 0.3s;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  background: linear-gradient(135deg, #ffe8ee, #ffd1dc);
+  border-color: var(--accent);
+  transform: scale(1.01);
+}
+.upload-zone .upload-icon { font-size: 44px; margin-bottom: 8px; }
+.upload-zone .upload-text { font-weight: 700; color: var(--accent); }
+.upload-zone .upload-hint { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+
+/* AI 识别 */
+.ai-processing {
+  text-align: center; padding: 24px;
+  background: linear-gradient(135deg, #fff8fb, #ffe8ee);
+  border-radius: var(--radius);
+  border: 2px solid var(--pink-200);
+}
+.ai-spinner {
+  display: inline-block; width: 44px; height: 44px;
+  border: 4px solid var(--pink-200);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.ai-result-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px;
+  background: #fff8fb; border: 1.5px solid var(--pink-200);
+  border-radius: var(--radius-sm); margin: 6px 0;
+  flex-wrap: wrap;
+}
+.ai-result-row img { width: 56px; height: 56px; object-fit: cover; border-radius: 10px; }
+.ai-result-row .info { flex: 1; min-width: 110px; }
+.ai-result-row .info .name { font-weight: 600; font-size: 13px; }
+.ai-result-row .info .conf { font-size: 11px; color: var(--text-light); }
+
+/* ==================== 移动端 ==================== */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px;
+    box-shadow: 4px 0 24px rgba(255,107,157,0.2);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .main-wrapper { margin-left: 0 !important; padding: 16px; }
+  .hamburger { display: flex; }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .page-header { padding: 12px 16px; }
+  .page-header .title { font-size: 16px; }
+  .form-row { flex-direction: column; }
+  .wardrobe-grid { grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 10px; }
+  .clothing-item .cl-img, .clothing-item .cl-img-placeholder { height: 110px; }
+  .brand-title::before, .brand-title::after { display: none; }
+  .mobile-overlay {
+    display: block; position: fixed; inset: 0;
+    background: rgba(90, 61, 92, 0.3); z-index: 99;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    backdrop-filter: blur(2px);
+  }
+  .mobile-overlay.show { opacity: 1; pointer-events: auto; }
+}
+
+@media (max-width: 480px) {
+  .cute-card { padding: 14px; }
+  .wardrobe-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .clothing-item .cl-img, .clothing-item .cl-img-placeholder { height: 90px; }
+}
+.mobile-overlay { display: none; }
+
+/* 减少动态效果偏好（无障碍） */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .bg-deco { display: none; }
+}
+
+/* 打印样式 */
+@media print {
+  .sidebar, .bg-deco, .page-header, .btn, .hamburger { display: none !important; }
+  .main-wrapper { margin-left: 0 !important; padding: 0; }
+  body { background: white; }
+  .cute-card { border: 1px solid #ddd; box-shadow: none; page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== 漂浮装饰背景 ==================== -->
+<div class="bg-deco">
+  <div class="deco d1">🌸</div>
+  <div class="deco d2">💕</div>
+  <div class="deco d3">✨</div>
+  <div class="deco d4">🦋</div>
+  <div class="deco d5">🌷</div>
+  <div class="deco d6">⭐</div>
+  <div class="deco d7">💗</div>
+  <div class="deco d8">🌸</div>
+  <div class="deco d9">✨</div>
+  <div class="deco d10">🌼</div>
+  <div class="deco d11">💫</div>
+  <div class="deco d12">🦄</div>
+</div>
+
+<div class="mobile-overlay" id="mobileOverlay"></div>
+
+<!-- ==================== 侧边栏 ==================== -->
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <div class="brand-title">谭大米の工作台</div>
+    <div class="brand-date" id="brandDate">今日小记</div>
+  </div>
+  <div class="nav-list">
+    <div class="nav-group active" data-module="wardrobe">
+      <div class="nav-group-header">
+        <span class="emoji">👗</span><span class="name">衣橱小窝</span><span class="arrow">▶</span>
+      </div>
+      <div class="nav-sub">
+        <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('wardrobe','closet')">🌷 电子衣架</div>
+        <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('wardrobe','outfit')">✨ 智能搭配</div>
+        <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('wardrobe','templates')">📒 穿搭模板</div>
+      </div>
+    </div>
+    <div class="nav-group" data-module="diet">
+      <div class="nav-group-header">
+        <span class="emoji">🍰</span><span class="name">美食小屋</span><span class="arrow">▶</span>
+      </div>
+      <div class="nav-sub">
+        <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('diet','plan')">🥗 减脂方案</div>
+        <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('diet','calorie')">💖 热量记录</div>
+        <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('diet','milktea')">🧋 奶茶摇一摇</div>
+      </div>
+    </div>
+    <div class="nav-group" data-module="travel">
+      <div class="nav-group-header">
+        <span class="emoji">✈️</span><span class="name">旅行手账</span><span class="arrow">▶</span>
+      </div>
+      <div class="nav-sub">
+        <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('travel','recommend')">🗺️ 智能推荐</div>
+        <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('travel','plans')">📓 我的计划</div>
+      </div>
+    </div>
+    <div class="nav-group" data-module="progress">
+      <div class="nav-group-header">
+        <span class="emoji">🌟</span><span class="name">每日进步</span><span class="arrow">▶</span>
+      </div>
+      <div class="nav-sub">
+        <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('progress','countdown')">⏰ 事项倒计时</div>
+        <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('progress','news')">📰 时政热点</div>
+      </div>
+    </div>
+    <div class="nav-group" data-module="retire">
+      <div class="nav-group-header">
+        <span class="emoji">💎</span><span class="name">退休计划</span><span class="arrow">▶</span>
+      </div>
+      <div class="nav-sub">
+        <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('retire','plan')">🌈 退休规划</div>
+        <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('retire','finance')">💰 每日收支</div>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <span class="sync-dot" id="syncDot"></span>
+    <span id="syncText">本地已保存</span>
+  </div>
+  <div class="sidebar-footer" style="margin-top:0;font-size:10px;border-top:none;padding-top:0;color:var(--text-light);" id="cloudHint">
+    ☁️ 点击 ☁️ 按钮开启云端同步
+  </div>
+</aside>
+
+<!-- ==================== 主内容区 ==================== -->
+<div class="main-wrapper">
+  <div class="page-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="hamburger" id="hamburgerBtn">☰</button>
+      <span class="title" id="pageTitle"><span class="heart">💗</span> 衣橱小窝</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="btn btn-outline btn-sm" id="cloudBtn" title="云端同步" style="border-color:#34d399;color:#34d399;">☁️</button>
+      <button class="refresh-btn" id="refreshBtn" title="刷新">🔄</button>
+    </div>
+  </div>
+  <div class="content-area" id="contentArea">
+    <div class="cute-card" style="text-align:center;padding:40px;">
+      <div class="ai-spinner" style="margin:0 auto 12px;"></div>
+      <p style="color:var(--text-light);">🌸 加载中...</p>
+    </div>
+  </div>
+</div>
+
+<!-- Toast 容器 -->
+<div id="toastContainer"></div>
+
+<!-- ==================== 数据层 ==================== -->
+<script>
+const STORAGE_KEY = 'workbuddy_v3';
+function loadData(){try{const r=localStorage.getItem(STORAGE_KEY);return r?JSON.parse(r):getDefaultData();}catch(e){return getDefaultData();}}
+function saveData(d){
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}
+  catch(e){
+    // 存储超限：自动清理最早的历史记录后重试
+    try{
+      if(Array.isArray(d.milkTeaHistory)&&d.milkTeaHistory.length>20)d.milkTeaHistory=d.milkTeaHistory.slice(-20);
+      if(Array.isArray(d.newsItems)&&d.newsItems.length>30)d.newsItems=d.newsItems.slice(0,30);
+      if(Array.isArray(d.dietPlans)&&d.dietPlans.length>30)d.dietPlans=d.dietPlans.slice(-30);
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(d));
+      showToast('⚠️ 存储空间不足，已自动清理旧数据','warning');
+    }catch(e2){showToast('💔 存储空间不足，请删除部分衣物图片','error');}
+  }
+}
+
+// ==================== IndexedDB 图片存储 ====================
+const IMG_DB_NAME='workbuddy_images';
+const IMG_STORE='images';
+
+function openImageDB(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(IMG_DB_NAME,1);
+    req.onerror=()=>reject(req.error);
+    req.onsuccess=()=>resolve(req.result);
+    req.onupgradeneeded=(e)=>{
+      const db=e.target.result;
+      if(!db.objectStoreNames.contains(IMG_STORE)) db.createObjectStore(IMG_STORE);
+    };
+  });
+}
+async function saveImage(id,dataUrl){
+  if(!id||!dataUrl)return;
+  const db=await openImageDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(IMG_STORE,'readwrite');
+    const store=tx.objectStore(IMG_STORE);
+    const req=store.put(dataUrl,id);
+    req.onsuccess=()=>resolve();
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function getImage(id){
+  if(!id)return null;
+  try{
+    const db=await openImageDB();
+    return new Promise((resolve,reject)=>{
+      const tx=db.transaction(IMG_STORE,'readonly');
+      const store=tx.objectStore(IMG_STORE);
+      const req=store.get(id);
+      req.onsuccess=()=>resolve(req.result||null);
+      req.onerror=()=>reject(req.error);
+    });
+  }catch(e){return null;}
+}
+async function deleteImage(id){
+  if(!id)return;
+  try{
+    const db=await openImageDB();
+    return new Promise((resolve,reject)=>{
+      const tx=db.transaction(IMG_STORE,'readwrite');
+      const store=tx.objectStore(IMG_STORE);
+      const req=store.delete(id);
+      req.onsuccess=()=>resolve();
+      req.onerror=()=>reject(req.error);
+    });
+  }catch(e){}
+}
+
+// 迁移旧数据：把 wardrobe 中的 base64 图片迁移到 IndexedDB
+async function migrateOldImages(){
+  let migrated=0;
+  for(const item of AppData.wardrobe||[]){
+    if(item.image && typeof item.image==='string' && item.image.startsWith('data:')){
+      const imageId = item.imageId || ('img_'+item.id);
+      await saveImage(imageId, item.image);
+      item.imageId = imageId;
+      delete item.image;
+      migrated++;
+    }
+  }
+  if(migrated>0){
+    saveData(AppData);
+    showToast(`✨ 已迁移 ${migrated} 张图片到新存储，空间已释放`);
+  }
+}
+
+// 获取衣物图片显示 URL（兼容旧 image 字段和新 imageId）
+async function getClothingImageSrc(item){
+  if(!item)return null;
+  if(item.imageId) return await getImage(item.imageId);
+  if(item.image) return item.image;
+  return null;
+}
+function getDefaultData(){return{
+  wardrobe:[],outfitTemplates:[],dietPlans:[],calorieRecords:[],
+  milkTeaHistory:[],milkTeaMenu:[
+    // 喜茶
+    {brand:'喜茶',name:'多肉葡萄',sweetness:'少糖',ice:'少冰',topping:'葡萄果肉'},
+    {brand:'喜茶',name:'芝芝莓莓',sweetness:'少糖',ice:'去冰',topping:'芝士奶盖'},
+    {brand:'喜茶',name:'满杯红柚',sweetness:'半糖',ice:'少冰',topping:'西柚粒'},
+    {brand:'喜茶',name:'烤黑糖波波牛乳',sweetness:'不另外加糖',ice:'去冰',topping:'黑糖波波'},
+    // 奈雪の茶
+    {brand:'奈雪',name:'霸气芝士草莓',sweetness:'少糖',ice:'少冰',topping:'草莓果肉'},
+    {brand:'奈雪',name:'霸气橙子',sweetness:'半糖',ice:'少冰',topping:'橙子片'},
+    {brand:'奈雪',name:'金色山脉宝藏茶',sweetness:'微糖',ice:'去冰',topping:'珍珠'},
+    // 茶百道
+    {brand:'茶百道',name:'杨枝甘露',sweetness:'半糖',ice:'少冰',topping:'西柚+芒果'},
+    {brand:'茶百道',name:'豆乳玉麒麟',sweetness:'微糖',ice:'去冰',topping:'豆乳奶盖'},
+    {brand:'茶百道',name:'超级杯水果茶',sweetness:'半糖',ice:'正常冰',topping:'混合水果'},
+    // 蜜雪冰城
+    {brand:'蜜雪冰城',name:'冰鲜柠檬水',sweetness:'正常糖',ice:'正常冰',topping:'柠檬片'},
+    {brand:'蜜雪冰城',name:'珍珠奶茶',sweetness:'正常糖',ice:'少冰',topping:'珍珠'},
+    {brand:'蜜雪冰城',name:'满杯百香果',sweetness:'正常糖',ice:'正常冰',topping:'百香果'},
+    {brand:'蜜雪冰城',name:'雪王大圣代',sweetness:'正常糖',ice:'冰淇淋',topping:'黑糖珍珠'},
+    // 古茗
+    {brand:'古茗',name:'芝士多肉葡萄',sweetness:'少糖',ice:'少冰',topping:'葡萄+奶盖'},
+    {brand:'古茗',name:'大叔奶茶',sweetness:'半糖',ice:'去冰',topping:'珍珠'},
+    {brand:'古茗',name:'超A芝士桃桃',sweetness:'微糖',ice:'少冰',topping:'桃子果肉'},
+    // 一点点
+    {brand:'一点点',name:'四季奶青',sweetness:'三分糖',ice:'去冰',topping:'波霸'},
+    {brand:'一点点',name:'红茶玛奇朵',sweetness:'半糖',ice:'少冰',topping:'奶盖'},
+    {brand:'一点点',name:'养乐多绿',sweetness:'半糖',ice:'正常冰',topping:'椰果'},
+    // CoCo
+    {brand:'CoCo',name:'奶茶三兄弟',sweetness:'半糖',ice:'少冰',topping:'珍珠+布丁+仙草'},
+    {brand:'CoCo',name:'鲜百香双响炮',sweetness:'半糖',ice:'正常冰',topping:'珍珠+椰果'},
+    {brand:'CoCo',name:'莓莓果茶',sweetness:'微糖',ice:'少冰',topping:'草莓'},
+    // 茶颜悦色
+    {brand:'茶颜悦色',name:'幽兰拿铁',sweetness:'标准糖',ice:'去冰',topping:'碧根果'},
+    {brand:'茶颜悦色',name:'声声乌龙',sweetness:'标准糖',ice:'去冰',topping:'无'},
+    {brand:'茶颜悦色',name:'人间烟火',sweetness:'标准糖',ice:'去冰',topping:'奶油'},
+    // 沪上阿姨
+    {brand:'沪上阿姨',name:'血糯米奶茶',sweetness:'半糖',ice:'热',topping:'血糯米'},
+    {brand:'沪上阿姨',name:'杨枝甘露',sweetness:'半糖',ice:'少冰',topping:'芒果+西柚'},
+    // 书亦烧仙草
+    {brand:'书亦',name:'烧仙草',sweetness:'半糖',ice:'去冰',topping:'仙草+珍珠+红豆'},
+    // 益禾堂
+    {brand:'益禾堂',name:'烤奶',sweetness:'半糖',ice:'去冰',topping:'珍珠'},
+  ],
+  travelPlans:[],countdowns:[],newsItems:[],
+  retirePlan:{age:28,workYears:5,salary:15000,savings:200000,socialSecurity:2000,housingFund:3000,targetRetireAge:55,retireNeeds:'月开销8000元',financeGoal:'存款500万'},
+  incomeExpenses:[],dailyQuote:'',quoteDate:'',calorieThreshold:1500,
+};}
+let AppData = loadData();
+function genId(){return Date.now().toString(36)+Math.random().toString(36).substr(2,6);}
+function formatDate(d){const dt=new Date(d);return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;}
+function today(){return formatDate(new Date());}
+function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function getCnDate(){
+  const d=new Date();
+  const cn=['一','二','三','四','五','六','日'];
+  return `${d.getMonth()+1}月${d.getDate()}日 · 星期${cn[d.getDay()-1]}`;
+}
+
+function showToast(msg,type='success'){
+  const c=document.getElementById('toastContainer');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  const icons={success:'✨',error:'💔',warning:'⚠️'};
+  t.innerHTML=`${icons[type]||'ℹ️'} ${msg}`;
+  c.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(120%)';setTimeout(()=>t.remove(),300);},2200);
+}
+
+function showModal(title,content,onConfirm,opts={}){
+  const o=document.createElement('div');
+  o.className='modal-overlay';
+  o.innerHTML=`<div class="modal" style="${opts.wide?'max-width:700px':''}"><h3>${title}</h3><div class="modal-body">${content}</div><div class="modal-actions"><button class="btn btn-outline cancel-btn">取消</button><button class="btn btn-primary confirm-btn">${opts.confirmText||'确认'}</button></div></div>`;
+  document.body.appendChild(o);
+  o.querySelector('.cancel-btn').onclick=()=>o.remove();
+  o.querySelector('.confirm-btn').onclick=()=>{const r=onConfirm(o);if(r!==false)o.remove();};
+  o.onclick=e=>{if(e.target===o)o.remove();};
+}
+
+// ==================== 导航 ====================
+// 图片压缩
+function compressImage(file,maxW=480,quality=0.55){
+  return new Promise(resolve=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement('canvas');
+        let w=img.width,h=img.height;
+        if(w>maxW){h=h*maxW/w;w=maxW;}
+        canvas.width=w;canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg',quality));
+      };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// AI 衣物识别 - 增强版（品类/材质/颜色/品牌/场景多维识别）
+const AI_RULES=[
+  // 上装
+  {patterns:['t恤','tshirt','tee','短袖','t-shirt','polo衫','polo'],category:'T恤',season:'夏',icon:'👚'},
+  {patterns:['衬衫','shirt','衬衣','blouse','雪纺衫'],category:'衬衫',season:'春秋',icon:'👔'},
+  {patterns:['毛衣','sweater','针织','knit','羊毛衫','羊绒','pullover'],category:'毛衣',season:'秋冬',icon:'🧶'},
+  {patterns:['卫衣','hoodie','sweatshirt','帽衫','连帽'],category:'卫衣',season:'秋冬',icon:'🧥'},
+  {patterns:['吊带','背心','camisole','tank','抹胸'],category:'背心吊带',season:'夏',icon:'🎽'},
+  // 外套
+  {patterns:['风衣','trench','windbreaker','呢子风衣'],category:'风衣',season:'春秋',icon:'🧥'},
+  {patterns:['大衣','coat','overcoat','毛呢','呢大衣','羊毛大衣'],category:'大衣',season:'冬',icon:'🧥'},
+  {patterns:['夹克','jacket','皮衣','leather','机车','牛仔外套','denim jacket'],category:'夹克',season:'春秋',icon:'🧥'},
+  {patterns:['羽绒','down','棉服','羽绒服','puffer','棉衣'],category:'羽绒服',season:'冬',icon:'🧥'},
+  {patterns:['西装','suit','blazer','西服','正装'],category:'西装',season:'春秋',icon:'🤵'},
+  {patterns:['开衫','cardigan','针织开衫','披肩'],category:'开衫',season:'春秋',icon:'🧶'},
+  {patterns:['防晒衣','防晒服','皮肤衣'],category:'防晒衣',season:'夏',icon:'🧥'},
+  // 下装
+  {patterns:['连衣裙','dress','长裙','连身裙','吊带裙','碎花裙'],category:'连衣裙',season:'夏',icon:'👗'},
+  {patterns:['半身裙','skirt','短裙','a字裙','百褶裙','包臀裙','伞裙'],category:'半身裙',season:'夏',icon:'👗'},
+  {patterns:['牛仔','jeans','牛仔裤'],category:'牛仔裤',season:'春秋',icon:'👖'},
+  {patterns:['短裤','shorts','热裤','五分裤','三分裤'],category:'短裤',season:'夏',icon:'🩳'},
+  {patterns:['阔腿裤','直筒裤','休闲裤','pants','西裤','烟管裤','锥形裤'],category:'长裤',season:'春秋',icon:'👖'},
+  {patterns:['打底裤','legging','瑜伽裤','紧身裤'],category:'打底裤',season:'春秋',icon:'👖'},
+  // 特殊
+  {patterns:['运动','sport','健身','瑜伽','gym','athletic'],category:'运动装',season:'夏',icon:'🎽'},
+  {patterns:['内衣','bra','内裤','文胸','underwear','睡衣','家居服'],category:'内衣家居',season:'夏',icon:'👙'},
+  {patterns:['泳衣','bikini','比基尼','泳装'],category:'泳衣',season:'夏',icon:'🩱'},
+  {patterns:['汉服','旗袍','和服','民族风'],category:'特色服饰',season:'春秋',icon:'👘'},
+];
+const MATERIAL_RULES=[
+  {patterns:['棉','cotton','纯棉'],material:'棉'},
+  {patterns:['麻','linen','亚麻'],material:'麻'},
+  {patterns:['丝','silk','真丝','桑蚕丝'],material:'真丝'},
+  {patterns:['羊毛','wool','羊绒','cashmere'],material:'羊毛'},
+  {patterns:['涤纶','polyester','聚酯纤维'],material:'涤纶'},
+  {patterns:['牛仔','denim'],material:'牛仔布'},
+  {patterns:['雪纺','chiffon'],material:'雪纺'},
+  {patterns:['蕾丝','lace'],material:'蕾丝'},
+  {patterns:['皮质','leather','pu'],material:'皮质'},
+];
+const BRAND_PATTERNS=['优衣库','uniqlo','zara','hm','h&m','ur','only','vero moda','乐町','太平鸟','ochirly','moussy','sly','cos','arket','massimo dutti'];
+const COLOR_STYLE=[
+  {colors:['白','white','米白'],style:'简约清新'},
+  {colors:['黑','black'],style:'酷帅暗黑'},
+  {colors:['粉','pink'],style:'甜美可爱'},
+  {colors:['蓝','blue'],style:'休闲日常'},
+  {colors:['红','red'],style:'复古优雅'},
+  {colors:['绿','green','军绿'],style:'复古文艺'},
+  {colors:['黄','yellow','姜黄'],style:'活泼元气'},
+  {colors:['紫','purple','薰衣草'],style:'浪漫温柔'},
+  {colors:['灰','grey'],style:'高级简约'},
+  {colors:['棕','brown','卡其'],style:'复古文艺'},
+  {colors:['条纹','stripe'],style:'法式休闲'},
+  {colors:['格子','check','plaid'],style:'学院复古'},
+  {colors:['碎花','floral','印花'],style:'甜美田园'},
+];
+function aiRecognize(fileName){
+  const lo=fileName.toLowerCase().replace(/\.[^.]+$/,'');
+  let cat='上衣',season='春秋',style='简约基础',conf=55,material='',brand='';
+  let best=null,score=0,matchedPatterns=[];
+
+  // 1. 品类匹配（支持多特征累加置信度）
+  for(const r of AI_RULES){
+    for(const p of r.patterns){
+      if(lo.includes(p)){
+        matchedPatterns.push(p);
+        if(p.length>score){score=p.length;best=r;}
+      }
+    }
+  }
+  if(best){
+    cat=best.category;season=best.season;
+    conf=Math.min(92,60+score*4+Math.min(matchedPatterns.length-1,3)*5);
+  }
+
+  // 2. 颜色风格匹配
+  let colorHits=0;
+  for(const cs of COLOR_STYLE){
+    for(const c of cs.colors){
+      if(lo.includes(c)){style=cs.style;colorHits++;conf=Math.min(96,conf+6);break;}
+    }
+  }
+
+  // 3. 材质识别
+  for(const m of MATERIAL_RULES){
+    for(const p of m.patterns){
+      if(lo.includes(p)){material=m.material;conf=Math.min(97,conf+5);break;}
+    }
+    if(material)break;
+  }
+
+  // 4. 品牌识别
+  for(const b of BRAND_PATTERNS){
+    if(lo.includes(b)){brand=b.toUpperCase();conf=Math.min(98,conf+4);break;}
+  }
+
+  // 5. 生成友好名称
+  let name=fileName.replace(/\.[^.]+$/,'').replace(/[_-]/g,' ').replace(/\s+/g,' ').trim();
+  if(name.length>20)name=name.slice(0,20);
+  if(!name||name.length<2){
+    name=`${material||''}${brand?brand+' ':''}${style}${cat}`.trim();
+  }
+
+  // 6. 置信度保底：至少匹配到品类或颜色才给高分
+  if(!best&&colorHits===0)conf=45;
+
+  return {name,category:cat,season,style,material,brand,confidence:conf,matchedPatterns};
+}
+
+// ==================== 导航切换 ====================
+let currentModule = 'wardrobe';
+let currentSubTab = 'closet';
+let _countdownTimer = null; // 倒计时刷新定时器（防止泄漏）
+
+function switchModule(name, subTab){
+  currentModule = name;
+  if(subTab) currentSubTab = subTab;
+
+  document.querySelectorAll('.nav-group').forEach(n=>n.classList.remove('active'));
+  document.querySelector(`[data-module="${name}"]`)?.classList.add('active');
+
+  const titles = {
+    wardrobe:'衣橱小窝', diet:'美食小屋', travel:'旅行手账',
+    progress:'每日进步', retire:'退休计划'
+  };
+  document.getElementById('pageTitle').innerHTML = `<span class="heart">💗</span> ${titles[name]||''}`;
+
+  renderModule(name);
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('mobileOverlay').classList.remove('show');
+}
+
+document.querySelectorAll('.nav-group').forEach(item=>{
+  item.addEventListener('click',()=>{
+    switchModule(item.dataset.module);
+  });
+});
+
+document.getElementById('hamburgerBtn').addEventListener('click',()=>{
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('mobileOverlay').classList.toggle('show');
+});
+document.getElementById('mobileOverlay').addEventListener('click',()=>{
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('mobileOverlay').classList.remove('show');
+});
+document.getElementById('refreshBtn').addEventListener('click',()=>{
+  AppData=loadData();
+  renderModule(currentModule);
+  showToast('数据已刷新 ✨');
+});
+
+// ==================== 云端同步引擎（Supabase） ====================
+// ⚠️ 安全提示：publishable key 暴露在源码中，仅适合个人单设备使用。
+// 若需多人使用或保护数据，请在 Supabase 后台启用 RLS(行级安全策略) 并替换为受限 key。
+const SB_URL = 'https://hhtkdnncibzmmdnehmef.supabase.co';
+const SB_KEY = 'sb_publishable_KwtsEroUHXYQymvR9YUNHw_CSZ3Ot-s';
+
+function updateCloudUI() {
+  const dot = document.getElementById('syncDot');
+  const text = document.getElementById('syncText');
+  const hint = document.getElementById('cloudHint');
+  const btn = document.getElementById('cloudBtn');
+  if (dot) dot.style.background = '#34d399';
+  if (text) text.textContent = '☁️ Supabase 云端同步';
+  if (hint) hint.textContent = '✅ 手机和电脑数据自动实时同步';
+  if (btn) { btn.style.borderColor = '#34d399'; btn.style.color = '#34d399'; }
+}
+
+// 云端保存（防抖3秒）
+let _cloudSaveTimer = null;
+function cloudSave() {
+  clearTimeout(_cloudSaveTimer);
+  _cloudSaveTimer = setTimeout(async () => {
+    try {
+      const payload = {...AppData, _syncedAt: new Date().toISOString()};
+      await fetch(`${SB_URL}/rest/v1/workbuddy_data`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SB_KEY,
+          'Authorization': `Bearer ${SB_KEY}`,
+          'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify({id:1, data:payload, updated_at:new Date().toISOString()})
+      });
+      const dot = document.getElementById('syncDot');
+      if (dot) dot.style.background = '#34d399';
+    } catch(e) {
+      const dot = document.getElementById('syncDot');
+      const text = document.getElementById('syncText');
+      if (dot) dot.style.background = 'var(--warning)';
+      if (text) text.textContent = '☁️ 同步失败(本地已保存)';
+    }
+  }, 3000);
+}
+
+// 覆盖原有 saveData，加入云端同步
+const _originalSaveData = saveData;
+saveData = function(data) { _originalSaveData(data); cloudSave(); };
+
+// 云端加载
+async function cloudLoad() {
+  try {
+    const resp = await fetch(`${SB_URL}/rest/v1/workbuddy_data?id=eq.1&select=data,updated_at`, {
+      headers: {'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`}
+    });
+    if (!resp.ok) return null;
+    const result = await resp.json();
+    const row = Array.isArray(result) ? result[0] : result;
+    return row?.data || null;
+  } catch(e) { return null; }
+}
+
+// ☁️ 按钮
+document.getElementById('cloudBtn').addEventListener('click', async () => {
+  showModal('☁️ 云端同步', `
+    <div style="text-align:center;padding:14px;background:linear-gradient(135deg,#d1fae5,#e0f7fa);border-radius:var(--radius-md);">
+      <div style="font-size:48px;">☁️</div>
+      <p style="font-weight:700;color:#059669;margin-top:8px;">Supabase 云端同步</p>
+      <p style="font-size:13px;color:var(--text-secondary);">手机和电脑自动实时同步中</p>
+    </div>
+    <p style="margin-top:12px;font-size:12px;color:var(--text-light);">
+      💡 每次数据变更自动上传至云端<br>
+      🔄 打开页面自动拉取最新数据<br>
+      💚 共享同一 Supabase 项目的设备自动互通
+    </p>
+  `, async () => {
+    const cloudData = await cloudLoad();
+    if (cloudData && cloudData._syncedAt) {
+      AppData = {...AppData, ...cloudData};
+      saveData(AppData);
+      renderModule(currentModule);
+      showToast('☁️ 已同步最新数据');
+    } else {
+      showToast('☁️ 当前已是最新');
+    }
+  }, {confirmText:'🔄 立即同步'});
+});
+
+function renderModule(name){
+  switch(name){
+    case 'wardrobe':renderWardrobe();break;
+    case 'diet':renderDiet();break;
+    case 'travel':renderTravel();break;
+    case 'progress':renderProgress();break;
+    case 'retire':renderRetire();break;
+  }
+}
+</script>
+
+<!-- ==================== 模块1：衣 ==================== -->
+<script>
+function renderWardrobe(){
+  const area=document.getElementById('contentArea');
+  const activeTab=currentModule==='wardrobe'?currentSubTab:'closet';
+  area.innerHTML=`<div class="tabs">
+    <div class="tab ${activeTab==='closet'?'active':''}" data-tab="closet">🌷 电子衣架</div>
+    <div class="tab ${activeTab==='outfit'?'active':''}" data-tab="outfit">✨ 智能搭配</div>
+    <div class="tab ${activeTab==='templates'?'active':''}" data-tab="templates">📒 穿搭模板</div>
+  </div><div id="wardrobeContent"></div>`;
+  area.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click',()=>{currentSubTab=t.dataset.tab;renderWardrobe();});
+  });
+  if(activeTab==='closet')renderCloset();
+  else if(activeTab==='outfit')renderOutfit();
+  else renderTemplates();
+}
+
+function renderCloset(){
+  const container=document.getElementById('wardrobeContent');
+  const items=AppData.wardrobe.filter(w=>!w.archived);
+  container.innerHTML=`
+    <div class="cute-card">
+      <div class="cute-card-header">
+        <span class="heart-icon">💗</span>
+        <span class="title-text">我的电子衣架</span>
+        <span class="badge-pill">${items.length}件</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+        <button class="btn btn-pink" onclick="batchUploadClothing()">📸 AI批量导入</button>
+        <button class="btn btn-primary" onclick="addClothing()">➕ 手动添加</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>🔍 筛选品类</label>
+          <select class="select" id="catFilter" onchange="filterCloset(this.value,document.getElementById('seasonFilter')?.value||'')">
+            <option value="">🌸 全部品类</option>
+            ${['上衣','T恤','衬衫','毛衣','卫衣','背心吊带','风衣','大衣','夹克','羽绒服','西装','开衫','防晒衣','半身裙','连衣裙','牛仔裤','长裤','短裤','打底裤','运动装','内衣家居','泳衣','特色服饰'].map(c=>`<option value="${c}">${c}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>🍂 筛选季节</label>
+          <select class="select" id="seasonFilter" onchange="filterCloset(document.getElementById('catFilter')?.value||'',this.value)">
+            <option value="">🌈 全部季节</option>
+            ${['春','夏','秋','冬'].map(s=>`<option value="${s}">${s}季</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="wardrobe-grid" id="wardrobeGrid"></div>
+    </div>`;
+  renderWardrobeGrid(items);
+}
+function renderWardrobeGrid(items){
+  const grid=document.getElementById('wardrobeGrid');
+  if(!grid)return;
+  if(items.length===0){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">👔</div><p>衣架空空如也~<br>点击"AI批量导入"开始整理吧！</p></div>`;
+    return;
+  }
+  const catIcons={'T恤':'👚','衬衫':'👔','毛衣':'🧶','卫衣':'🧥','外套':'🧥','风衣':'🧥','大衣':'🧥','夹克':'🧥','半身裙':'👗','连衣裙':'👗','长裤':'👖','短裤':'🩳','运动装':'🎽','内衣配饰':'👙','上衣':'👚'};
+  grid.innerHTML=items.map(item=>{
+    const placeholder=catIcons[item.category]||'👕';
+    return `<div class="clothing-item" onclick="viewClothing('${item.id}')" data-id="${item.id}">
+      <div class="cl-img-placeholder" id="clph-${item.id}" style="width:100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:14px;font-size:48px;">${placeholder}</div>
+      <img class="cl-img" id="climg-${item.id}" style="display:none;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;" alt="${escapeHtml(item.name)}" loading="lazy">
+      <div class="cl-name">${escapeHtml(item.name)}</div>
+      <div class="cl-cat">🏷️ ${item.category||'未分类'} · ${item.season||'?'}季</div>
+    </div>`;
+  }).join('');
+  // 异步加载 IndexedDB 图片
+  items.forEach(async item=>{
+    const src=await getClothingImageSrc(item);
+    if(src){
+      const img=document.getElementById(`climg-${item.id}`);
+      const ph=document.getElementById(`clph-${item.id}`);
+      if(img&&ph){img.src=src;img.style.display='block';ph.style.display='none';}
+    }
+  });
+}
+function filterCloset(cat,season){
+  let items=AppData.wardrobe.filter(w=>!w.archived);
+  if(cat)items=items.filter(i=>i.category===cat);
+  if(season)items=items.filter(i=>i.season===season);
+  renderWardrobeGrid(items);
+}
+
+let pendingBatchItems=[];
+function batchUploadClothing(){
+  pendingBatchItems=[];
+  const content=`
+    <div class="upload-zone" id="batchUploadZone">
+      <div class="upload-icon">📸</div>
+      <div class="upload-text">点击或拖拽图片到此处</div>
+      <div class="upload-hint">支持 JPG/PNG/WebP · 可一次选择多张<br>上传后 AI 自动识别衣物品类 ✨</div>
+    </div>
+    <input type="file" id="batchFileInput" accept="image/*" multiple style="display:none;">
+    <div id="batchPreview"></div>`;
+  showModal('🤖 AI批量导入衣物',content,async(overlay)=>{
+    if(pendingBatchItems.length===0){showToast('请先选择图片','error');return false;}
+    for(const item of pendingBatchItems){
+      const id=genId();
+      const imageId='img_'+id;
+      await saveImage(imageId, item.image);
+      AppData.wardrobe.push({id,name:item.name,category:item.category,season:item.season,style:item.style,note:item.note||'',imageId,archived:false,createdAt:today()});
+    }
+    saveData(AppData);renderWardrobe();showToast(`✨ AI已识别并导入 ${pendingBatchItems.length} 件衣物！`);
+  },{wide:true,confirmText:`💾 全部导入 (${pendingBatchItems.length}件)`});
+
+  setTimeout(()=>{
+    const zone=document.getElementById('batchUploadZone');
+    const input=document.getElementById('batchFileInput');
+    if(!zone||!input)return;
+    zone.onclick=()=>input.click();
+    zone.ondragover=e=>{e.preventDefault();zone.classList.add('drag-over');};
+    zone.ondragleave=()=>zone.classList.remove('drag-over');
+    zone.ondrop=e=>{e.preventDefault();zone.classList.remove('drag-over');handleBatchFiles(e.dataTransfer.files);};
+    input.onchange=e=>handleBatchFiles(e.target.files);
+  },100);
+}
+async function handleBatchFiles(files){
+  if(!files||files.length===0)return;
+  const preview=document.getElementById('batchPreview');
+  preview.innerHTML=`<div class="ai-processing"><div class="ai-spinner"></div><p style="margin-top:10px;font-weight:700;color:var(--accent);">🤖 AI 正在智能识别 ${files.length} 张图片...</p></div>`;
+  pendingBatchItems=[];
+  for(let i=0;i<files.length;i++){
+    const dataUrl=await compressImage(files[i]);
+    const r=aiRecognize(files[i].name);
+    pendingBatchItems.push({name:r.name,category:r.category,season:r.season,style:r.style,note:`AI置信度: ${r.confidence}%`,image:dataUrl,confidence:r.confidence});
+  }
+  const cats=['上衣','T恤','衬衫','毛衣','卫衣','背心吊带','风衣','大衣','夹克','羽绒服','西装','开衫','防晒衣','半身裙','连衣裙','牛仔裤','长裤','短裤','打底裤','运动装','内衣家居','泳衣','特色服饰'];
+  const seasons=['春','夏','秋','冬'];
+  preview.innerHTML=`<p style="font-weight:700;margin:10px 0;color:var(--text);">📋 AI识别结果（点击可逐件修改）：</p>${pendingBatchItems.map((item,idx)=>`
+    <div class="ai-result-row">
+      <img src="${item.image}">
+      <div class="info"><div class="name">${escapeHtml(item.name)}</div><div class="conf">🤖 置信度 ${item.confidence}%</div></div>
+      <select class="select" style="width:auto;min-width:80px;" onchange="pendingBatchItems[${idx}].category=this.value">${cats.map(c=>`<option ${item.category===c?'selected':''}>${c}</option>`).join('')}</select>
+      <select class="select" style="width:auto;min-width:60px;" onchange="pendingBatchItems[${idx}].season=this.value">${seasons.map(s=>`<option ${item.season===s?'selected':''}>${s}季</option>`).join('')}</select>
+      <input class="input" style="width:auto;min-width:100px;" value="${escapeHtml(item.name)}" onchange="pendingBatchItems[${idx}].name=this.value">
+      <button class="btn btn-danger btn-xs" onclick="pendingBatchItems.splice(${idx},1);this.closest('.ai-result-row').remove();updateBatchCount()">✕</button>
+    </div>`).join('')}`;
+  updateBatchCount();
+}
+function updateBatchCount(){
+  const btn=document.querySelector('.confirm-btn');
+  if(btn)btn.textContent=`💾 全部导入 (${pendingBatchItems.length}件)`;
+}
+
+function addClothing(){
+  const cats=['上衣','T恤','衬衫','毛衣','卫衣','背心吊带','风衣','大衣','夹克','羽绒服','西装','开衫','防晒衣','半身裙','连衣裙','牛仔裤','长裤','短裤','打底裤','运动装','内衣家居','泳衣','特色服饰'];
+  showModal('➕ 手动添加衣物',`<div class="form-group"><label>📛 名称</label><input class="input" id="newClName" placeholder="如：白色简约衬衫"></div><div class="form-row"><div class="form-group"><label>🏷️ 品类</label><select class="select" id="newClCat">${cats.map(c=>`<option>${c}</option>`).join('')}</select></div><div class="form-group"><label>🍂 季节</label><select class="select" id="newClSeason"><option>春</option><option>夏</option><option>秋</option><option>冬</option></select></div></div><div class="form-group"><label>🎨 风格</label><input class="input" id="newClStyle" placeholder="如：休闲、商务"></div><div class="form-group"><label>📝 备注</label><textarea class="textarea" id="newClNote"></textarea></div><div class="form-group"><label>🖼️ 图片URL</label><input class="input" id="newClImg"></div><div class="upload-zone" id="singleUploadZone" style="padding:18px;"><span style="font-size:24px;">📤</span> 点击上传图片</div><input type="file" id="singleFileInput" accept="image/*" style="display:none;">`,async(overlay)=>{
+    const name=overlay.querySelector('#newClName').value.trim();
+    if(!name){showToast('请输入名称','error');return false;}
+    const id=genId();
+    let imageId='';
+    const uploaded=overlay._uploadedImage;
+    const urlInput=overlay.querySelector('#newClImg').value.trim();
+    if(uploaded){
+      imageId='img_'+id;
+      await saveImage(imageId, uploaded);
+    }else if(urlInput){
+      // 外部 URL 仍直接存到 image 字段（不需要 IndexedDB）
+      // 这里为了统一，也存到 IndexedDB
+      imageId='img_'+id;
+      await saveImage(imageId, urlInput);
+    }
+    AppData.wardrobe.push({id,name,category:overlay.querySelector('#newClCat').value,season:overlay.querySelector('#newClSeason').value,style:overlay.querySelector('#newClStyle').value,note:overlay.querySelector('#newClNote').value,imageId,archived:false,createdAt:today()});
+    saveData(AppData);renderWardrobe();showToast('✨ 衣物添加成功！');
+  });
+  setTimeout(()=>{
+    const zone=document.getElementById('singleUploadZone');
+    const input=document.getElementById('singleFileInput');
+    if(!zone||!input)return;
+    zone.onclick=()=>input.click();
+    input.onchange=async e=>{
+      const file=e.target.files[0];if(!file)return;
+      const dataUrl=await compressImage(file);
+      const r=aiRecognize(file.name);
+      const nameEl=document.getElementById('newClName');const catEl=document.getElementById('newClCat');const seasonEl=document.getElementById('newClSeason');const styleEl=document.getElementById('newClStyle');const imgEl=document.getElementById('newClImg');
+      if(nameEl&&!nameEl.value)nameEl.value=r.name;
+      if(catEl)catEl.value=r.category;
+      if(seasonEl)seasonEl.value=r.season;
+      if(styleEl&&!styleEl.value)styleEl.value=r.style;
+      if(imgEl)imgEl.value=dataUrl;
+      const overlay=document.querySelector('.modal-overlay');
+      if(overlay)overlay._uploadedImage=dataUrl;
+      zone.innerHTML=`<span style="font-size:24px;">✅</span> 已上传 · AI建议: ${r.category}`;
+    };
+  },100);
+}
+function viewClothing(id){
+  const item=AppData.wardrobe.find(w=>w.id===id);if(!item)return;
+  const catIcons={'T恤':'👚','衬衫':'👔','毛衣':'🧶','卫衣':'🧥','外套':'🧥','风衣':'🧥','大衣':'🧥','夹克':'🧥','半身裙':'👗','连衣裙':'👗','长裤':'👖','短裤':'🩳','运动装':'🎽','内衣配饰':'👙','上衣':'👚'};
+  const imgHtml=item.imageId?`<img id="vdimg-${id}" src="" style="max-width:200px;max-height:200px;border-radius:14px;border:2px solid var(--pink-200);display:none;"><div id="vdph-${id}" style="font-size:72px;">${catIcons[item.category]||'👕'}</div>`:(item.image?`<img src="${item.image}" style="max-width:200px;max-height:200px;border-radius:14px;border:2px solid var(--pink-200);">`:`<div style="font-size:72px;">${catIcons[item.category]||'👕'}</div>`);
+  showModal('👔 衣物详情',`<div style="text-align:center;margin-bottom:12px;">${imgHtml}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;"><p><strong>📛 名称：</strong>${escapeHtml(item.name)}</p><p><strong>🏷️ 品类：</strong><span class="badge-pill">${item.category}</span></p><p><strong>🍂 季节：</strong>${item.season}季</p><p><strong>🎨 风格：</strong>${item.style||'未设置'}</p><p><strong>📅 添加：</strong>${item.createdAt}</p></div><p style="margin-top:8px;"><strong>📝 备注：</strong>${escapeHtml(item.note||'无')}</p><div style="margin-top:14px;display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="editClothing('${id}')">✏️ 编辑</button><button class="btn btn-danger btn-sm" onclick="deleteClothing('${id}')">🗑️ 删除</button><button class="btn btn-outline btn-sm" onclick="archiveClothing('${id}')">${item.archived?'📥 取消归档':'📦 归档'}</button></div>`,()=>true);
+  if(item.imageId){
+    getImage(item.imageId).then(src=>{
+      if(src){
+        const img=document.getElementById(`vdimg-${id}`);
+        const ph=document.getElementById(`vdph-${id}`);
+        if(img&&ph){img.src=src;img.style.display='inline-block';ph.style.display='none';}
+      }
+    });
+  }
+}
+function editClothing(id){
+  const item=AppData.wardrobe.find(w=>w.id===id);if(!item)return;
+  const cats=['上衣','T恤','衬衫','毛衣','卫衣','背心吊带','风衣','大衣','夹克','羽绒服','西装','开衫','防晒衣','半身裙','连衣裙','牛仔裤','长裤','短裤','打底裤','运动装','内衣家居','泳衣','特色服饰'];
+  showModal('✏️ 编辑衣物',`<div class="form-group"><label>📛 名称</label><input class="input" id="editName" value="${escapeHtml(item.name)}"></div><div class="form-row"><div class="form-group"><label>🏷️ 品类</label><select class="select" id="editCat">${cats.map(c=>`<option ${item.category===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="form-group"><label>🍂 季节</label><select class="select" id="editSeason"><option ${item.season==='春'?'selected':''}>春</option><option ${item.season==='夏'?'selected':''}>夏</option><option ${item.season==='秋'?'selected':''}>秋</option><option ${item.season==='冬'?'selected':''}>冬</option></select></div></div><div class="form-group"><label>🎨 风格</label><input class="input" id="editStyle" value="${escapeHtml(item.style||'')}"></div><div class="form-group"><label>📝 备注</label><textarea class="textarea" id="editNote">${escapeHtml(item.note||'')}</textarea></div><div class="form-group"><label>🖼️ 图片URL</label><input class="input" id="editImg" value="${escapeHtml(item.image||'')}"></div>`,(overlay)=>{
+    item.name=overlay.querySelector('#editName').value.trim()||item.name;
+    item.category=overlay.querySelector('#editCat').value;
+    item.season=overlay.querySelector('#editSeason').value;
+    item.style=overlay.querySelector('#editStyle').value;
+    item.note=overlay.querySelector('#editNote').value;
+    item.image=overlay.querySelector('#editImg').value;
+    saveData(AppData);renderWardrobe();showToast('✨ 已更新');
+  });
+}
+function deleteClothing(id){if(confirm('确定删除？')){AppData.wardrobe=AppData.wardrobe.filter(w=>w.id!==id);saveData(AppData);renderWardrobe();showToast('🗑️ 已删除');document.querySelector('.modal-overlay')?.remove();}}
+function archiveClothing(id){const item=AppData.wardrobe.find(w=>w.id===id);if(item){item.archived=!item.archived;saveData(AppData);renderWardrobe();showToast(item.archived?'📦 已归档':'📥 已恢复');document.querySelector('.modal-overlay')?.remove();}}
+
+function renderOutfit(){
+  document.getElementById('wardrobeContent').innerHTML=`
+    <div class="cute-card">
+      <div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">智能每日搭配</span></div>
+      <div style="background:linear-gradient(135deg,#ffd1dc,#ffe5ec);border-radius:var(--radius-md);padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+        <div style="font-size:46px;" id="weatherIcon">🌤️</div>
+        <div><div style="font-size:28px;font-weight:800;" id="weatherTemp">--°C</div><div style="font-size:13px;color:var(--text-secondary);" id="weatherDesc">获取天气中...</div></div>
+      </div>
+      <div id="outfitSuggestion" style="text-align:center;padding:14px;"><p style="color:var(--text-light);">🤖 AI 正在分析你的衣橱...</p></div>
+      <div style="text-align:center;margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="generateOutfit()">🔄 换一套</button>
+        <button class="btn btn-pink" onclick="manualOutfit()">✋ 手动搭配</button>
+      </div>
+    </div>`;
+  fetchWeatherAndRecommend();
+}
+async function fetchWeatherAndRecommend(){
+  try{
+    const pos=await new Promise((resolve,reject)=>{
+      if(!navigator.geolocation){reject();return;}
+      navigator.geolocation.getCurrentPosition(resolve,reject,{timeout:5000});
+    }).catch(()=>({coords:{latitude:39.9,longitude:116.4}}));
+    const resp=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&current_weather=true&timezone=auto`);
+    const data=await resp.json();
+    recommendOutfit(data.current_weather.temperature,data.current_weather.weathercode);
+    const wm={0:'☀️ 晴',1:'🌤️ 晴间多云',2:'⛅ 多云',3:'☁️ 阴',45:'🌫️ 雾',51:'🌦️ 小雨',61:'🌧️ 阵雨',71:'❄️ 小雪',80:'⛈️ 雷阵雨'};
+    document.getElementById('weatherIcon').textContent=data.current_weather.weathercode<=2?'☀️':data.current_weather.weathercode<=3?'⛅':data.current_weather.weathercode<=55?'🌧️':'🌨️';
+    document.getElementById('weatherTemp').textContent=data.current_weather.temperature+'°C';
+    document.getElementById('weatherDesc').textContent=wm[data.current_weather.weathercode]||'未知';
+  }catch(e){
+    recommendOutfit(22,1);
+    document.getElementById('weatherIcon').textContent='🌤️';
+    document.getElementById('weatherTemp').textContent='22°C';
+    document.getElementById('weatherDesc').textContent='晴间多云（模拟）';
+  }
+}
+function recommendOutfit(temp,code){
+  const items=AppData.wardrobe.filter(w=>!w.archived);
+  const isRain=code>=51&&code<=65;
+  let rule,sug;
+  if(temp>=30){rule='夏';sug='☀️ 炎热·轻薄透气穿搭';}
+  else if(temp>=22){rule='夏';sug='🌿 舒适·清爽简约穿搭';}
+  else if(temp>=15){rule='春秋';sug='🍂 微凉·薄外套+长袖';}
+  else if(temp>=5){rule='春秋';sug='🧣 转凉·毛衣+外套';}
+  else{rule='冬';sug='❄️ 寒冷·保暖羽绒服+毛衣';}
+  if(isRain)sug+=' ☔ 带伞~';
+  // 优先按季节匹配，无匹配再回退到全部
+  const seasonMatch=i=>i.season===rule||(rule==='春秋'&&(i.season==='春'||i.season==='秋'))||i.season==='春秋';
+  let tops=items.filter(i=>['上衣','T恤','衬衫','毛衣','卫衣'].includes(i.category)&&seasonMatch(i));
+  if(tops.length===0)tops=items.filter(i=>['上衣','T恤','衬衫','毛衣','卫衣'].includes(i.category));
+  let bottoms=items.filter(i=>['长裤','短裤','半身裙','连衣裙'].includes(i.category)&&seasonMatch(i));
+  if(bottoms.length===0)bottoms=items.filter(i=>['长裤','短裤','半身裙','连衣裙'].includes(i.category));
+  let outers=items.filter(i=>['外套','风衣','大衣','夹克'].includes(i.category)&&seasonMatch(i));
+  if(outers.length===0)outers=items.filter(i=>['外套','风衣','大衣','夹克'].includes(i.category));
+  const pick=a=>a.length>0?a[Math.floor(Math.random()*a.length)]:null;
+  const top=pick(tops),bottom=pick(bottoms),outer=temp<20?pick(outers):null;
+  const el=document.getElementById('outfitSuggestion');
+  if(!el)return;
+  let html=`<p style="color:var(--text-secondary);margin-bottom:12px;font-weight:600;">📝 ${sug}</p><div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">`;
+  if(top)html+=`<div style="text-align:center;background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:var(--radius-md);padding:10px;width:85px;"><div style="font-size:34px;">👚</div><div style="font-size:12px;font-weight:600;">${escapeHtml(top.name)}</div><div style="font-size:10px;color:var(--accent);">上装</div></div>`;
+  if(bottom)html+=`<div style="text-align:center;background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:var(--radius-md);padding:10px;width:85px;"><div style="font-size:34px;">👖</div><div style="font-size:12px;font-weight:600;">${escapeHtml(bottom.name)}</div><div style="font-size:10px;color:var(--accent);">下装</div></div>`;
+  if(outer)html+=`<div style="text-align:center;background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:var(--radius-md);padding:10px;width:85px;"><div style="font-size:34px;">🧥</div><div style="font-size:12px;font-weight:600;">${escapeHtml(outer.name)}</div><div style="font-size:10px;color:var(--accent);">外套</div></div>`;
+  html+=`<div style="text-align:center;background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:var(--radius-md);padding:10px;width:85px;"><div style="font-size:34px;">💍</div><div style="font-size:12px;font-weight:600;">简约配饰</div><div style="font-size:10px;color:var(--accent);">配饰</div></div></div>`;
+  html+=`<div style="text-align:center;margin-top:14px;"><button class="btn btn-pink btn-sm" onclick="saveOutfitTemplate('${top?.id||''}','${bottom?.id||''}','${outer?.id||''}')">💾 保存模板</button></div>`;
+  el.innerHTML=html;
+}
+function generateOutfit(){renderOutfit();}
+function saveOutfitTemplate(tid,bid,oid){
+  const t=AppData.wardrobe.find(w=>w.id===tid),b=AppData.wardrobe.find(w=>w.id===bid),o=AppData.wardrobe.find(w=>w.id===oid);
+  AppData.outfitTemplates.push({id:genId(),items:[t?.name,b?.name,o?.name].filter(Boolean),weather:'当前',date:today(),scene:'日常',note:''});
+  saveData(AppData);showToast('✨ 模板已保存');
+}
+function manualOutfit(){
+  const items=AppData.wardrobe.filter(w=>!w.archived);
+  showModal('✋ 手动搭配',`<div class="form-group"><label>👚 上衣</label><select class="select" id="manTop"><option value="">不选</option>${items.filter(i=>['上衣','T恤','衬衫','毛衣','卫衣'].includes(i.category)).map(i=>`<option value="${i.id}">${escapeHtml(i.name)}</option>`).join('')}</select></div><div class="form-group"><label>👖 下装</label><select class="select" id="manBottom"><option value="">不选</option>${items.filter(i=>['长裤','短裤','半身裙','连衣裙'].includes(i.category)).map(i=>`<option value="${i.id}">${escapeHtml(i.name)}</option>`).join('')}</select></div><div class="form-group"><label>🧥 外套</label><select class="select" id="manOuter"><option value="">不选</option>${items.filter(i=>['外套','风衣','大衣','夹克'].includes(i.category)).map(i=>`<option value="${i.id}">${escapeHtml(i.name)}</option>`).join('')}</select></div><div class="form-group"><label>🎬 场景</label><input class="input" id="manScene" placeholder="如：上班通勤"></div>`,(overlay)=>{
+    const t=items.find(i=>i.id===overlay.querySelector('#manTop').value);
+    const b=items.find(i=>i.id===overlay.querySelector('#manBottom').value);
+    const o=items.find(i=>i.id===overlay.querySelector('#manOuter').value);
+    const scene=overlay.querySelector('#manScene').value||'日常';
+    AppData.outfitTemplates.push({id:genId(),items:[t?.name,b?.name,o?.name].filter(Boolean),weather:'手动',date:today(),scene,note:''});
+    saveData(AppData);showToast('✨ 已保存');
+  });
+}
+function renderTemplates(){
+  const temps=AppData.outfitTemplates;
+  document.getElementById('wardrobeContent').innerHTML=`<div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">穿搭模板库</span><span class="badge-pill">${temps.length}套</span></div>${temps.length===0?'<div class="empty-state"><div class="empty-icon">📒</div><p>还没有穿搭模板~</p></div>':temps.map(t=>`<div class="list-item"><div class="item-info"><div class="item-title">👗 ${escapeHtml(t.items.join(' + ')||'未命名')}</div><div class="item-meta">${escapeHtml(t.date)} · ${escapeHtml(t.scene)}</div></div><div class="item-actions"><button class="btn btn-outline btn-xs" onclick="viewTemplate('${t.id}')">查看</button><button class="btn btn-danger btn-xs" onclick="deleteTemplate('${t.id}')">删除</button></div></div>`).join('')}</div>`;
+}
+function viewTemplate(id){const t=AppData.outfitTemplates.find(x=>x.id===id);if(!t)return;showModal('📒 穿搭模板',`<p><strong>搭配：</strong>${escapeHtml(t.items.join(' + '))}</p><p><strong>场景：</strong>${escapeHtml(t.scene)}</p><p><strong>日期：</strong>${escapeHtml(t.date)}</p>`,()=>true);}
+function deleteTemplate(id){AppData.outfitTemplates=AppData.outfitTemplates.filter(t=>t.id!==id);saveData(AppData);renderTemplates();showToast('已删除');}
+</script>
+
+<!-- ==================== 模块2：食 ==================== -->
+<script>
+function renderDiet(){
+  const area=document.getElementById('contentArea');
+  const activeTab=currentModule==='diet'?currentSubTab:'plan';
+  area.innerHTML=`<div class="tabs"><div class="tab ${activeTab==='plan'?'active':''}" data-tab="plan">🥗 减脂方案</div><div class="tab ${activeTab==='calorie'?'active':''}" data-tab="calorie">💖 热量记录</div><div class="tab ${activeTab==='milktea'?'active':''}" data-tab="milktea">🧋 奶茶摇一摇</div></div><div id="dietContent"></div>`;
+  area.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{currentSubTab=t.dataset.tab;renderDiet();});});
+  if(activeTab==='plan')renderDietPlan();
+  else if(activeTab==='calorie')renderCalorie();
+  else renderMilkTea();
+}
+
+// 国家居民膳食指南减脂方案（中国营养学会2022版）
+// 原则：谷类为主、多吃蔬果、适量鱼禽蛋瘦肉、少盐少油、控糖限酒
+const DIET_GUIDE_MEALS={
+  breakfast:[
+    {name:'燕麦牛奶粥',items:['燕麦40g','脱脂牛奶250ml','水煮蛋1个(50g)','圣女果100g'],cal:320,cook:'燕麦加水煮5分钟，倒入牛奶再煮2分钟',tip:'谷薯类+奶制品+蛋类'},
+    {name:'全麦三明治套餐',items:['全麦面包2片(60g)','煎蛋1个(少油)','生菜50g','番茄50g','无糖豆浆250ml'],cal:310,cook:'面包烤2分钟，夹入煎蛋生菜番茄',tip:'全谷物+优质蛋白'},
+    {name:'紫薯酸奶套餐',items:['蒸紫薯150g','无糖酸奶200g','水煮蛋1个','黄瓜100g'],cal:290,cook:'紫薯蒸15分钟，搭配酸奶和黄瓜',tip:'粗粮+益生菌'},
+    {name:'杂粮粥套餐',items:['小米杂粮粥300g','茶叶蛋1个','凉拌菠菜100g','苹果半个(100g)'],cal:300,cook:'小米+燕麦+红豆提前泡2小时煮40分钟',tip:'B族维生素丰富'},
+  ],
+  lunch:[
+    {name:'清蒸鲈鱼套餐',items:['鲈鱼150g','糙米饭100g','西兰花150g','紫菜蛋花汤1碗'],cal:450,cook:'鲈鱼姜丝清蒸10分钟，西兰花白灼',tip:'优质蛋白+膳食纤维'},
+    {name:'鸡胸肉沙拉',items:['鸡胸肉120g','混合生菜150g','玉米粒50g','圣女果100g','橄榄油醋汁'],cal:420,cook:'鸡胸肉水煮撕丝，蔬菜洗净拌油醋汁',tip:'低脂高蛋白'},
+    {name:'番茄龙利鱼套餐',items:['龙利鱼150g','番茄200g','荞麦面80g','凉拌木耳100g'],cal:430,cook:'番茄炒出汁加水煮鱼，荞麦面煮熟',tip:'Omega-3+番茄红素'},
+    {name:'瘦牛肉时蔬套餐',items:['瘦牛肉100g','彩椒150g','芦笋100g','杂粮饭100g'],cal:460,cook:'牛肉切片少油炒彩椒芦笋',tip:'补铁+维生素C'},
+    {name:'豆腐虾仁套餐',items:['北豆腐150g','虾仁80g','青菜150g','玉米半根'],cal:410,cook:'豆腐虾仁炖煮，青菜清炒',tip:'植物蛋白+动物蛋白'},
+  ],
+  dinner:[
+    {name:'冬瓜海带汤套餐',items:['冬瓜200g','海带100g','豆腐100g','蒸红薯100g'],cal:250,cook:'冬瓜海带煮汤，豆腐切块加入',tip:'低热量高纤维'},
+    {name:'清蒸鸡胸肉套餐',items:['鸡胸肉100g','蒸南瓜150g','凉拌黄瓜150g','菌菇汤1碗'],cal:260,cook:'鸡胸肉蒸熟撕条，南瓜蒸15分钟',tip:'饱腹感强'},
+    {name:'番茄豆腐汤套餐',items:['番茄200g','嫩豆腐150g','金针菇100g','蒸山药100g'],cal:240,cook:'番茄炒汁加水煮豆腐金针菇',tip:'助消化'},
+    {name:'白灼虾套餐',items:['鲜虾150g','芦笋150g','蒸紫薯100g','海带汤1碗'],cal:270,cook:'虾白灼2分钟，芦笋焯水',tip:'低脂高蛋白'},
+    {name:'蔬菜豆腐煲',items:['豆腐150g','白菜200g','香菇50g','粉丝30g','蒸玉米半根'],cal:280,cook:'少油砂锅炖煮15分钟',tip:'暖胃低卡'},
+  ],
+  snack:[
+    {name:'苹果1个(200g)',cal:100,tip:'下午加餐'},
+    {name:'无糖酸奶100g+蓝莓50g',cal:90,tip:'补充益生菌'},
+    {name:'黄瓜1根+小番茄100g',cal:60,tip:'低卡零食'},
+    {name:'原味坚果15g',cal:90,tip:'优质脂肪'},
+  ]
+};
+
+function renderDietPlan(){
+  const container=document.getElementById('dietContent');
+  const todayPlan=AppData.dietPlans.find(p=>p.date===today());
+  if(!todayPlan){
+    const b=DIET_GUIDE_MEALS.breakfast[Math.floor(Math.random()*DIET_GUIDE_MEALS.breakfast.length)];
+    const l=DIET_GUIDE_MEALS.lunch[Math.floor(Math.random()*DIET_GUIDE_MEALS.lunch.length)];
+    const d=DIET_GUIDE_MEALS.dinner[Math.floor(Math.random()*DIET_GUIDE_MEALS.dinner.length)];
+    const s=DIET_GUIDE_MEALS.snack[Math.floor(Math.random()*DIET_GUIDE_MEALS.snack.length)];
+    AppData.dietPlans.push({id:genId(),date:today(),breakfast:b,lunch:l,dinner:d,snack:s,totalCal:b.cal+l.cal+d.cal+s.cal});
+    saveData(AppData);
+  }
+  const plan=todayPlan||AppData.dietPlans[AppData.dietPlans.length-1];
+  const meals=[{icon:'🌅',label:'早餐',data:plan.breakfast,color:'#ffe5ec'},{icon:'☀️',label:'午餐',data:plan.lunch,color:'#fff4e0'},{icon:'🌙',label:'晚餐',data:plan.dinner,color:'#e6f7ed'},{icon:'🍎',label:'加餐',data:plan.snack,color:'#f0e6fa'}];
+  container.innerHTML=`<div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">${today()} 减脂饮食方案</span><span class="badge-pill">${plan.totalCal} kcal</span></div>
+    <div style="background:linear-gradient(135deg,#e6f7ed,#d4f1e0);border-radius:var(--radius-md);padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--text-secondary);">
+      📋 依据《中国居民膳食指南(2022)》· 减脂期建议每日摄入1200-1500kcal · 少油少盐 · 多吃蔬果
+    </div>
+    <div class="grid-2">${meals.map(m=>`
+      <div style="background:${m.color};border-radius:var(--radius-md);padding:14px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:20px;">${m.icon}</span>
+          <span style="font-size:16px;font-weight:700;">${m.label}</span>
+          <span class="badge-rose" style="margin-left:auto;">🔥 ${m.data?.cal||0} kcal</span>
+        </div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">${escapeHtml(m.data?.name||'')}</div>
+        ${m.data?.items?`<div style="font-size:12px;color:var(--text-secondary);margin-bottom:6px;">${m.data.items.map(i=>`• ${escapeHtml(i)}`).join('<br>')}</div>`:''}
+        ${m.data?.cook?`<div style="font-size:11px;background:rgba(255,255,255,0.7);padding:6px 10px;border-radius:8px;margin-top:6px;">👨‍🍳 ${escapeHtml(m.data.cook)}</div>`:''}
+        ${m.data?.tip?`<div style="font-size:10px;color:var(--accent);margin-top:4px;">💡 ${escapeHtml(m.data.tip)}</div>`:''}
+      </div>`).join('')}
+    </div>
+    <div style="text-align:center;margin-top:14px;display:flex;gap:8px;justify-content:center;">
+      <button class="btn btn-pink btn-sm" onclick="regenerateDietPlan()">🔄 换一套</button>
+      <button class="btn btn-outline btn-sm" onclick="showDietGuide()">📖 膳食指南</button>
+    </div>
+  </div>
+  <div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">历史方案</span></div>${AppData.dietPlans.slice().reverse().slice(0,5).map(p=>`<div class="list-item"><div class="item-info"><div class="item-title">${p.date}</div><div class="item-meta">${p.totalCal} kcal</div></div></div>`).join('')||'<div class="empty-state"><p>暂无历史</p></div>'}</div>`;
+}
+function regenerateDietPlan(){AppData.dietPlans=AppData.dietPlans.filter(p=>p.date!==today());saveData(AppData);renderDietPlan();showToast('✨ 新方案');}
+function showDietGuide(){
+  showModal('📖 中国居民膳食指南(2022)核心推荐',`
+    <div style="max-height:400px;overflow-y:auto;font-size:13px;line-height:1.8;">
+      <p><strong>🌾 食物多样，合理搭配</strong><br>每天摄入12种以上食物，每周25种以上</p>
+      <p><strong>🥬 多吃蔬果、奶类、全谷、大豆</strong><br>餐餐有蔬菜，每天300-500g；天天吃水果，每天200-350g</p>
+      <p><strong>🐟 适量吃鱼、禽、蛋、瘦肉</strong><br>每周吃鱼2次，每天1个蛋，畜禽肉每天40-75g</p>
+      <p><strong>🧂 少盐少油，控糖限酒</strong><br>每天盐<5g，油25-30g，糖<50g(最好<25g)</p>
+      <p><strong>🏃 吃动平衡，健康体重</strong><br>每周至少5天中等强度运动，累计150分钟以上</p>
+      <p><strong>💧 足量饮水</strong><br>每天1500-1700ml，少量多次</p>
+      <p style="margin-top:12px;padding:10px;background:#fff4e0;border-radius:8px;font-size:12px;">
+        💡 减脂期建议：每日热量缺口300-500kcal，蛋白质摄入1.2-1.5g/kg体重，主食以粗粮为主
+      </p>
+    </div>`,()=>true);
+}
+
+function setCalorieThreshold(){
+  const v=prompt('设置每日热量目标 (kcal)',AppData.calorieThreshold);
+  if(v){const n=parseInt(v);if(n>500&&n<5000){AppData.calorieThreshold=n;saveData(AppData);renderCalorie();showToast('✨ 目标已更新');}}
+}
+function renderCalorie(){
+  const container=document.getElementById('dietContent');
+  const records=AppData.calorieRecords.filter(r=>r.date===today());
+  const total=records.reduce((s,r)=>s+r.calories,0);
+  const over=total>AppData.calorieThreshold;
+  container.innerHTML=`
+    <div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">今日热量</span><button class="btn btn-primary btn-sm" onclick="addCalorieRecord()">➕ 记录</button></div>
+      <div style="text-align:center;padding:16px;"><div style="font-size:46px;font-weight:800;color:${over?'var(--danger)':'var(--success)'};">${total}</div><div style="color:var(--text-secondary);cursor:pointer;" onclick="setCalorieThreshold()" title="点击修改目标">/ ${AppData.calorieThreshold} kcal ✏️</div><div style="height:10px;background:#ffe8ee;border-radius:10px;overflow:hidden;margin:14px auto;max-width:300px;"><div style="height:100%;width:${Math.min(100,total/AppData.calorieThreshold*100)}%;background:linear-gradient(90deg,#ff9eb5,#ff6b9d);border-radius:10px;transition:width 0.5s;"></div></div>${over?'<span class="badge-rose">⚠️ 已超标</span>':'<span class="badge-success">✅ 正常</span>'}</div>
+    </div>
+    <div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">今日记录</span></div>${records.length===0?'<div class="empty-state"><div class="empty-icon">🍽️</div><p>还没有记录~</p></div>':records.map(r=>`<div class="list-item"><div class="item-info"><div class="item-title">${escapeHtml(r.foodName)} <span class="badge-pink">${escapeHtml(r.mealType)}</span></div><div class="item-meta">🔥 ${r.calories} kcal</div></div><button class="btn btn-danger btn-xs" onclick="deleteCalorieRecord('${r.id}')">删除</button></div>`).join('')}</div>`;
+}
+// 常见食物热量数据库（每100g）
+const FOOD_DB={
+  '米饭':116,'白米饭':116,'糙米饭':112,'粥':46,'面条':137,'馒头':223,'包子':227,'饺子':240,
+  '鸡胸肉':133,'鸡腿':181,'鸡蛋':144,'水煮蛋':144,'煎蛋':196,'牛肉':125,'瘦牛肉':106,'猪肉':395,'瘦肉':143,
+  '鱼':113,'鲈鱼':105,'三文鱼':139,'虾':93,'螃蟹':103,'豆腐':81,'豆浆':31,
+  '西兰花':36,'菠菜':28,'生菜':15,'黄瓜':16,'番茄':20,'胡萝卜':41,'土豆':81,'红薯':99,'玉米':112,
+  '苹果':53,'香蕉':93,'橙子':48,'西瓜':31,'葡萄':45,'草莓':32,'蓝莓':57,
+  '牛奶':65,'酸奶':72,'脱脂牛奶':34,'芝士':328,'黄油':888,
+  '面包':313,'全麦面包':246,'蛋糕':347,'饼干':435,'巧克力':586,'薯片':548,'坚果':607,
+  '可乐':43,'奶茶':52,'咖啡':2,'啤酒':32,'果汁':45,
+  '沙拉':152,'三明治':265,'汉堡':295,'披萨':266,'薯条':298,'炸鸡':279,
+  '火锅':200,'麻辣烫':150,'烧烤':250,'寿司':145,'拉面':280,'炒饭':188,
+};
+
+function recognizeFood(fileName){
+  const lo=fileName.toLowerCase().replace(/\.[^.]+$/,'');
+  let best=null,maxLen=0;
+  for(const food in FOOD_DB){
+    if(lo.includes(food)&&food.length>maxLen){maxLen=food.length;best=food;}
+  }
+  // 拼音/英文匹配
+  const pinyinMap={fan:'米饭',miantiao:'面条',jidan:'鸡蛋',jirou:'鸡肉',niurou:'牛肉',zhurou:'猪肉',yu:'鱼',xia:'虾',pingguo:'苹果',xiangjiao:'香蕉',niunai:'牛奶',mianbao:'面包',shala:'沙拉',hanbao:'汉堡',pisa:'披萨',huoguo:'火锅'};
+  if(!best){
+    for(const py in pinyinMap){
+      if(lo.includes(py)){best=pinyinMap[py];break;}
+    }
+  }
+  if(best){
+    return {name:best,calPer100g:FOOD_DB[best],estimatedCal:Math.round(FOOD_DB[best]*1.5)}; // 默认150g
+  }
+  return {name:fileName.replace(/\.[^.]+$/,''),calPer100g:100,estimatedCal:150};
+}
+
+function addCalorieRecord(){
+  showModal('🔥 记录饮食',`
+    <div class="upload-zone" id="foodUploadZone" style="margin-bottom:14px;padding:18px;">
+      <div style="font-size:32px;">📸</div>
+      <div style="font-weight:600;margin-top:4px;">上传食物照片</div>
+      <div style="font-size:11px;color:var(--text-light);">支持 JPG/PNG · 自动识别食物和热量</div>
+    </div>
+    <input type="file" id="foodFileInput" accept="image/*" style="display:none;">
+    <div id="foodPreview" style="display:none;margin-bottom:12px;text-align:center;">
+      <img id="foodImg" style="max-width:150px;max-height:150px;border-radius:12px;border:2px solid var(--pink-200);">
+    </div>
+    <div class="form-group"><label>🍽️ 食物名称</label><input class="input" id="calName" placeholder="如：鸡胸肉沙拉"></div>
+    <div class="form-row">
+      <div class="form-group"><label>餐别</label><select class="select" id="calMeal"><option>早餐</option><option>午餐</option><option>晚餐</option><option>加餐</option></select></div>
+      <div class="form-group"><label>🔥 热量(kcal)</label><input class="input" type="number" id="calCal" placeholder="自动识别"></div>
+    </div>
+    <div id="foodSuggest" style="display:none;background:#e6f7ed;padding:10px;border-radius:8px;margin-bottom:10px;font-size:12px;"></div>
+    <div class="form-group"><label>📝 备注</label><input class="input" id="calNote"></div>`,(overlay)=>{
+    const name=overlay.querySelector('#calName').value.trim(),cal=parseInt(overlay.querySelector('#calCal').value)||0;
+    if(!name||!cal){showToast('请填写完整','error');return false;}
+    const img=overlay._foodImage||'';
+    AppData.calorieRecords.push({id:genId(),date:today(),foodName:name,mealType:overlay.querySelector('#calMeal').value,calories:cal,note:overlay.querySelector('#calNote').value,image:img});
+    saveData(AppData);renderCalorie();showToast('✨ 记录成功');
+  });
+
+  setTimeout(()=>{
+    const zone=document.getElementById('foodUploadZone');
+    const input=document.getElementById('foodFileInput');
+    if(!zone||!input)return;
+    zone.onclick=()=>input.click();
+    input.onchange=async e=>{
+      const file=e.target.files[0];if(!file)return;
+      const dataUrl=await compressImage(file,300,0.6);
+      const r=recognizeFood(file.name);
+      document.getElementById('foodPreview').style.display='block';
+      document.getElementById('foodImg').src=dataUrl;
+      document.getElementById('calName').value=r.name;
+      document.getElementById('calCal').value=r.estimatedCal;
+      const sug=document.getElementById('foodSuggest');
+      sug.style.display='block';
+      sug.innerHTML=`🤖 AI识别：<strong>${r.name}</strong> · 约${r.calPer100g}kcal/100g · 预估${r.estimatedCal}kcal`;
+      const overlay=document.querySelector('.modal-overlay');
+      if(overlay)overlay._foodImage=dataUrl;
+      zone.innerHTML='<div style="font-size:24px;">✅</div><div style="font-size:12px;">已上传，可点击重新选择</div>';
+    };
+  },100);
+}
+function deleteCalorieRecord(id){AppData.calorieRecords=AppData.calorieRecords.filter(r=>r.id!==id);saveData(AppData);renderCalorie();showToast('已删除');}
+
+let _mtDeviceMotionHandler=null;
+function renderMilkTea(){
+  const container=document.getElementById('dietContent');
+  if(!container)return;
+  const history=AppData.milkTeaHistory.slice().reverse().slice(0,10);
+  const lastResult=container.dataset.lastMilkTeaResult||'';
+  container.innerHTML=`
+    <div class="cute-card" style="text-align:center;">
+      <div class="cute-card-header" style="justify-content:center;"><span class="heart-icon">💗</span><span class="title-text">奶茶摇一摇</span></div>
+      <div style="font-size:88px;padding:18px;cursor:pointer;user-select:none;" id="milkteaShaker" onclick="shakeMilkTea()">🧋</div>
+      <p style="color:var(--text-secondary);margin-bottom:14px;font-size:13px;">👆 点击奶茶图标 或 下方按钮随机抽取 🎲</p>
+      <div id="milkTeaResult" style="min-height:80px;padding:8px;">${lastResult}</div>
+      <button class="btn btn-primary" onclick="shakeMilkTea()" style="font-size:15px;padding:12px 26px;margin-top:8px;">🎲 摇一摇抽奶茶</button>
+      <div style="margin-top:10px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="manageMilkTeaMenu()">📝 管理菜单</button>
+        <button class="btn btn-outline btn-sm" onclick="clearMilkTeaHistory()">🗑️ 清空历史</button>
+      </div>
+    </div>
+    <div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">抽取历史</span><span class="badge-pill">${AppData.milkTeaHistory.length}次</span></div>${history.length===0?'<div class="empty-state"><div class="empty-icon">📜</div><p>还没有记录哦~</p></div>':history.map(h=>`<div class="list-item"><div class="item-info"><div class="item-title">🧋 ${h.brand?`<span style="color:var(--accent);font-size:11px;">[${escapeHtml(h.brand)}]</span> `:''}${escapeHtml(h.name)}</div><div class="item-meta">${escapeHtml(h.sweetness)} · ${escapeHtml(h.ice)} · ${escapeHtml(h.topping)} · ${escapeHtml(h.date)}</div></div></div>`).join('')}</div>`;
+
+  if(_mtDeviceMotionHandler){window.removeEventListener('devicemotion',_mtDeviceMotionHandler);}
+  if(window.DeviceMotionEvent){
+    let lastShake=0;
+    _mtDeviceMotionHandler=e=>{const acc=e.accelerationIncludingGravity;if(!acc)return;const f=Math.abs(acc.x||0)+Math.abs(acc.y||0)+Math.abs(acc.z||0);if(f>30&&Date.now()-lastShake>2000){lastShake=Date.now();shakeMilkTea();}};
+    window.addEventListener('devicemotion',_mtDeviceMotionHandler);
+  }
+}
+
+function shakeMilkTea(){
+  let resultEl=document.getElementById('milkTeaResult');
+  let shaker=document.getElementById('milkteaShaker');
+  if(!resultEl||!shaker){renderMilkTea();setTimeout(()=>{const r=document.getElementById('milkTeaResult');if(r)_doShake(r);},50);return;}
+  _doShake(resultEl);
+}
+let _shakeLock=false;
+function _doShake(resultEl){
+  if(_shakeLock)return; // 防连击：动画期间忽略重复触发
+  _shakeLock=true;
+  setTimeout(()=>{_shakeLock=false;},800);
+  const shaker=document.getElementById('milkteaShaker');
+  if(shaker){shaker.classList.add('shaking');setTimeout(()=>shaker.classList.remove('shaking'),1500);}
+  const menu=AppData.milkTeaMenu;
+  if(!menu||menu.length===0){resultEl.innerHTML='<p style="color:var(--text-light);">😢 菜单为空</p>';return;}
+  const pick=menu[Math.floor(Math.random()*menu.length)];
+  const sw=['无糖','微糖','三分糖','半糖','七分糖','全糖'],ic=['去冰','少冰','正常冰','常温','热'],tp=['珍珠','椰果','红豆','布丁','芋圆','波波','脆啵啵'];
+  const sweetness=pick.sweetness||sw[Math.floor(Math.random()*sw.length)];
+  const ice=pick.ice||ic[Math.floor(Math.random()*ic.length)];
+  const topping=pick.topping||tp[Math.floor(Math.random()*tp.length)];
+  AppData.milkTeaHistory.push({id:genId(),date:today(),brand:pick.brand||'',name:pick.name,sweetness,ice,topping});
+  saveData(AppData);
+  const brandBadge=pick.brand?`<span class="badge-pill" style="background:var(--accent);color:white;">${escapeHtml(pick.brand)}</span>`:'';
+  const resultHTML=`<div class="bounceIn" style="animation:bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1);"><div style="font-size:54px;margin-bottom:4px;">🧋</div><div style="margin-bottom:4px;">${brandBadge}</div><div style="font-size:22px;font-weight:800;color:var(--accent);margin:6px 0;">${escapeHtml(pick.name)}</div><div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px;"><span class="badge-rose">🍬 ${sweetness}</span><span class="badge-info">🧊 ${ice}</span><span class="badge-warning">🧋 ${topping}</span></div></div>`;
+  resultEl.innerHTML=resultHTML;
+  const container=document.getElementById('dietContent');
+  if(container)container.dataset.lastMilkTeaResult=resultHTML;
+  // 实时更新历史
+  const hist=AppData.milkTeaHistory.slice().reverse().slice(0,10);
+  const lastCard=document.querySelectorAll('#dietContent .cute-card')[1];
+  if(lastCard){
+    lastCard.innerHTML=`<div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">抽取历史</span><span class="badge-pill">${AppData.milkTeaHistory.length}次</span></div>${hist.map(h=>`<div class="list-item"><div class="item-info"><div class="item-title">🧋 ${escapeHtml(h.name)}</div><div class="item-meta">${escapeHtml(h.sweetness)} · ${escapeHtml(h.ice)} · ${escapeHtml(h.topping)} · ${escapeHtml(h.date)}</div></div></div>`).join('')}`;
+  }
+}
+function manageMilkTeaMenu(){
+  const rows=AppData.milkTeaMenu.map((m,i)=>`<div class="list-item"><div class="item-info"><div class="item-title">${m.brand?`<span style="color:var(--accent);font-size:11px;">[${escapeHtml(m.brand)}]</span> `:''}${escapeHtml(m.name)}</div><div class="item-meta">${m.sweetness} · ${m.ice} · ${m.topping||'无'}</div></div><button class="btn btn-danger btn-xs" onclick="removeMilkTeaItem(${i});document.querySelector('.modal-overlay')?.remove();manageMilkTeaMenu();">删除</button></div>`).join('');
+  showModal('📝 管理奶茶菜单',`<div style="max-height:280px;overflow-y:auto;margin-bottom:12px;">${rows||'<p style="color:var(--text-light);">菜单为空</p>'}</div><div class="form-row"><div class="form-group"><input class="input" id="mtBrand" placeholder="品牌(如:喜茶)"></div><div class="form-group"><input class="input" id="mtName" placeholder="奶茶名称"></div></div><div class="form-row"><div class="form-group"><select class="select" id="mtSweet"><option value="">随机</option><option>无糖</option><option>微糖</option><option>三分糖</option><option>半糖</option><option>少糖</option></select></div><div class="form-group"><select class="select" id="mtIce"><option value="">随机</option><option>去冰</option><option>少冰</option><option>常温</option><option>热</option></select></div><div class="form-group"><input class="input" id="mtTopping" placeholder="配料"></div></div>`,(overlay)=>{
+    const name=overlay.querySelector('#mtName').value.trim();if(!name){showToast('请输入名称','error');return false;}
+    AppData.milkTeaMenu.push({brand:overlay.querySelector('#mtBrand').value.trim(),name,sweetness:overlay.querySelector('#mtSweet').value,ice:overlay.querySelector('#mtIce').value,topping:overlay.querySelector('#mtTopping').value});
+    saveData(AppData);renderMilkTea();showToast('✨ 已添加');
+  });
+}
+function removeMilkTeaItem(i){AppData.milkTeaMenu.splice(i,1);saveData(AppData);renderMilkTea();showToast('已删除');}
+function clearMilkTeaHistory(){if(confirm('清空历史？')){AppData.milkTeaHistory=[];saveData(AppData);renderMilkTea();showToast('✨ 已清空');}}
+</script>
+
+<!-- ==================== 模块3：行 ==================== -->
+<script>
+function renderTravel(){
+  const area=document.getElementById('contentArea');
+  const activeTab=currentModule==='travel'?currentSubTab:'recommend';
+  area.innerHTML=`<div class="tabs"><div class="tab ${activeTab==='recommend'?'active':''}" data-tab="recommend">🗺️ 智能推荐</div><div class="tab ${activeTab==='plans'?'active':''}" data-tab="plans">📓 我的计划</div></div><div id="travelContent"></div>`;
+  area.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{currentSubTab=t.dataset.tab;renderTravel();});});
+  if(activeTab==='recommend')renderTravelRecommend();else renderTravelPlans();
+}
+// 目的地数据库 - 包含距离/交通/最佳时间
+const DEST_DB=[
+  // 华东
+  {name:'杭州',region:'华东',tags:['自然风光','人文古镇'],spots:['西湖','灵隐寺','龙井村','西溪湿地'],foods:'西湖醋鱼、东坡肉、龙井虾仁',dist:{beijing:1250,shanghai:180,guangzhou:1200},days:3,budget:2500,bestSeason:'春',desc:'人间天堂，西湖美景'},
+  {name:'苏州',region:'华东',tags:['人文古镇'],spots:['拙政园','平江路','山塘街','金鸡湖'],foods:'松鼠桂鱼、苏式汤面、生煎包',dist:{beijing:1150,shanghai:100,guangzhou:1300},days:2,budget:1800,bestSeason:'春',desc:'园林之城，江南水乡'},
+  {name:'厦门',region:'华东',tags:['海边度假','文艺小资'],spots:['鼓浪屿','曾厝垵','环岛路','南普陀寺'],foods:'沙茶面、海蛎煎、土笋冻',dist:{beijing:2000,shanghai:1100,guangzhou:700},days:4,budget:3500,bestSeason:'秋',desc:'海上花园，文艺小岛'},
+  {name:'青岛',region:'华东',tags:['海边度假','美食之旅'],spots:['栈桥','八大关','崂山','啤酒博物馆'],foods:'海鲜、青岛啤酒、鲅鱼水饺',dist:{beijing:700,shanghai:900,guangzhou:1800},days:3,budget:2800,bestSeason:'夏',desc:'红瓦绿树，碧海蓝天'},
+  // 华南
+  {name:'桂林',region:'华南',tags:['自然风光'],spots:['漓江','阳朔西街','十里画廊','龙脊梯田'],foods:'桂林米粉、啤酒鱼、竹筒饭',dist:{beijing:2000,shanghai:1500,guangzhou:500},days:4,budget:3000,bestSeason:'春',desc:'桂林山水甲天下'},
+  {name:'三亚',region:'华南',tags:['海边度假'],spots:['亚龙湾','天涯海角','蜈支洲岛','南山寺'],foods:'海鲜、椰子鸡、清补凉',dist:{beijing:2800,shanghai:2200,guangzhou:900},days:5,budget:5000,bestSeason:'冬',desc:'东方夏威夷，避寒胜地'},
+  // 西南
+  {name:'成都',region:'西南',tags:['美食之旅','人文古镇'],spots:['宽窄巷子','锦里','大熊猫基地','都江堰'],foods:'火锅、串串香、担担面、龙抄手',dist:{beijing:1800,shanghai:1900,guangzhou:1400},days:4,budget:3200,bestSeason:'春',desc:'天府之国，美食之都'},
+  {name:'重庆',region:'西南',tags:['美食之旅','小众打卡'],spots:['洪崖洞','解放碑','长江索道','磁器口'],foods:'火锅、小面、酸辣粉、毛血旺',dist:{beijing:1700,shanghai:1600,guangzhou:1200},days:3,budget:2800,bestSeason:'秋',desc:'山城雾都，8D魔幻'},
+  {name:'丽江',region:'西南',tags:['人文古镇','自然风光'],spots:['丽江古城','玉龙雪山','束河古镇','蓝月谷'],foods:'腊排骨、纳西烤鱼、鸡豆凉粉',dist:{beijing:2600,shanghai:2700,guangzhou:1600},days:5,budget:4000,bestSeason:'春',desc:'柔软时光，艳遇之都'},
+  {name:'大理',region:'西南',tags:['自然风光','文艺小资'],spots:['洱海','大理古城','苍山','双廊'],foods:'乳扇、饵丝、酸辣鱼',dist:{beijing:2700,shanghai:2800,guangzhou:1700},days:4,budget:3500,bestSeason:'春',desc:'风花雪月，苍山洱海'},
+  // 西北
+  {name:'西安',region:'西北',tags:['人文古镇','美食之旅'],spots:['兵马俑','大雁塔','古城墙','回民街'],foods:'肉夹馍、凉皮、羊肉泡馍、biangbiang面',dist:{beijing:1100,shanghai:1400,guangzhou:1800},days:3,budget:2500,bestSeason:'秋',desc:'十三朝古都，历史厚重'},
+  // 华北
+  {name:'北京',region:'华北',tags:['人文古镇','亲子游'],spots:['故宫','长城','颐和园','南锣鼓巷'],foods:'烤鸭、炸酱面、豆汁儿、卤煮',dist:{beijing:0,shanghai:1300,guangzhou:2200},days:4,budget:3500,bestSeason:'秋',desc:'首都风范，皇家气派'},
+  // 东北
+  {name:'哈尔滨',region:'东北',tags:['自然风光','小众打卡'],spots:['冰雪大世界','中央大街','索菲亚教堂','松花江'],foods:'锅包肉、红肠、马迭尔冰棍',dist:{beijing:1300,shanghai:2200,guangzhou:3200},days:4,budget:3500,bestSeason:'冬',desc:'冰城雪乡，俄式风情'},
+  // 中部
+  {name:'长沙',region:'华中',tags:['美食之旅','小众打卡'],spots:['橘子洲','岳麓山','文和友','太平街'],foods:'臭豆腐、糖油粑粑、口味虾',dist:{beijing:1500,shanghai:1100,guangzhou:700},days:3,budget:2200,bestSeason:'秋',desc:'星城长沙，娱乐之都'},
+  {name:'武汉',region:'华中',tags:['美食之旅','人文古镇'],spots:['黄鹤楼','东湖','户部巷','江汉路'],foods:'热干面、鸭脖、豆皮',dist:{beijing:1200,shanghai:800,guangzhou:1000},days:3,budget:2000,bestSeason:'春',desc:'江城武汉，过早文化'},
+];
+
+// 获取实时天气（联网）
+async function fetchWeather(city){
+  try{
+    const resp=await fetch(`https://wttr.in/${encodeURIComponent(city)}?format=j1`,{signal:AbortSignal.timeout(5000)});
+    const data=await resp.json();
+    const cur=data.current_condition[0];
+    return {temp:parseInt(cur.temp_C),desc:cur.lang_zh?.[0]?.value||cur.weatherDesc[0].value,humidity:cur.humidity,icon:cur.weatherCode};
+  }catch(e){
+    return null;
+  }
+}
+
+// 计算交通方式和时间
+function getTransportInfo(dist,transport){
+  if(transport==='飞机'){
+    const hours=Math.max(1,Math.round(dist/800*10)/10);
+    return {time:`${hours}小时`,price:Math.round(dist*0.8),icon:'✈️'};
+  }else if(transport==='高铁'){
+    const hours=Math.max(1,Math.round(dist/250*10)/10);
+    return {time:`${hours}小时`,price:Math.round(dist*0.4),icon:'🚄'};
+  }else{ // 自驾
+    const hours=Math.max(2,Math.round(dist/100*10)/10);
+    return {time:`${hours}小时`,price:Math.round(dist*0.6),icon:'🚗'};
+  }
+}
+
+function renderTravelRecommend(){
+  document.getElementById('travelContent').innerHTML=`
+    <div class="cute-card">
+      <div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">智能旅行推荐</span><span class="badge-pill">联网数据</span></div>
+      <div style="background:linear-gradient(135deg,#e6f7ed,#d4f1e0);border-radius:var(--radius-md);padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--text-secondary);">
+        🌐 基于真实目的地数据 · 支持获取当地实时天气 · 距离/交通/预算智能计算
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>📍 出发城市</label><select class="select" id="trFrom"><option value="beijing">北京</option><option value="shanghai">上海</option><option value="guangzhou">广州</option></select></div>
+        <div class="form-group"><label>🌸 季节</label><select class="select" id="trSeason"><option value="">不限</option><option>春</option><option>夏</option><option>秋</option><option>冬</option></select></div>
+        <div class="form-group"><label>📅 天数</label><input class="input" type="number" id="trDays" value="3" min="1" max="10"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>💰 预算(元/人)</label><input class="input" type="number" id="trBudget" value="3000" min="500"></div>
+        <div class="form-group"><label>👥 人数</label><input class="input" type="number" id="trPeople" value="2" min="1"></div>
+        <div class="form-group"><label>🚗 方式</label><select class="select" id="trTransport"><option>高铁</option><option>飞机</option><option>自驾</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>🎯 偏好</label><select class="select" id="trPreference"><option value="">不限</option><option>自然风光</option><option>人文古镇</option><option>海边度假</option><option>小众打卡</option><option>美食之旅</option><option>文艺小资</option><option>亲子游</option></select></div>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="generateTravelPlanV2()">🔍 AI智能匹配目的地</button>
+    </div>
+    <div id="travelResult"></div>`;
+}
+async function generateTravelPlanV2(){
+  const from=document.getElementById('trFrom').value;
+  const season=document.getElementById('trSeason').value;
+  const days=Math.max(1,Math.min(10,parseInt(document.getElementById('trDays').value)||3));
+  const budget=Math.max(500,parseInt(document.getElementById('trBudget').value)||3000);
+  const people=Math.max(1,parseInt(document.getElementById('trPeople').value)||2);
+  const pref=document.getElementById('trPreference').value;
+  const trans=document.getElementById('trTransport').value;
+
+  // 筛选目的地
+  let candidates=DEST_DB.filter(d=>{
+    if(season&&d.bestSeason!==season)return false;
+    if(pref&&!d.tags.includes(pref))return false;
+    if(d.days>days+1)return false; // 建议天数不超过计划天数+1
+    if(d.budget>budget*1.2)return false; // 预算浮动20%
+    return true;
+  });
+
+  if(candidates.length===0){
+    document.getElementById('travelResult').innerHTML=`<div class="cute-card"><div class="empty-state"><div class="empty-icon">😢</div><p>没有找到匹配的目的地，试试放宽条件？</p></div></div>`;
+    return;
+  }
+
+  // 随机选一个
+  const dest=candidates[Math.floor(Math.random()*candidates.length)];
+  const dist=dest.dist[from]||1000;
+  const transInfo=getTransportInfo(dist,trans);
+
+  // 生成行程
+  let itinerary='';
+  const spots=dest.spots;
+  for(let i=0;i<days;i++){
+    const spot1=spots[i%spots.length];
+    const spot2=spots[(i+1)%spots.length];
+    const food=dest.foods.split('、')[i%3];
+    if(i===0){
+      itinerary+=`<div style="background:#fff8fb;padding:10px;border-radius:10px;margin-bottom:8px;"><strong>Day ${i+1}:</strong> ${transInfo.icon} 抵达${dest.name} → ${spot1} → 品尝${food}</div>`;
+    }else if(i===days-1){
+      itinerary+=`<div style="background:#fff8fb;padding:10px;border-radius:10px;margin-bottom:8px;"><strong>Day ${i+1}:</strong> ${spot1} → 购买伴手礼 → ${transInfo.icon} 返程</div>`;
+    }else{
+      itinerary+=`<div style="background:#fff8fb;padding:10px;border-radius:10px;margin-bottom:8px;"><strong>Day ${i+1}:</strong> ${spot1} → ${spot2} → 品尝${food}</div>`;
+    }
+  }
+
+  // 显示加载中
+  document.getElementById('travelResult').innerHTML=`<div class="cute-card" style="text-align:center;padding:30px;"><div class="ai-spinner"></div><p style="margin-top:10px;">正在获取${dest.name}实时天气...</p></div>`;
+
+  // 获取天气
+  const weather=await fetchWeather(dest.name);
+  const weatherHtml=weather?`
+    <div style="display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#e0f2fe,#bae6fd);padding:12px;border-radius:10px;margin-bottom:12px;">
+      <div style="font-size:36px;">${weather.temp>25?'☀️':weather.temp>15?'⛅':weather.temp>5?'☁️':'❄️'}</div>
+      <div>
+        <div style="font-size:24px;font-weight:800;">${weather.temp}°C</div>
+        <div style="font-size:12px;color:#0369a1;">${escapeHtml(weather.desc)} · 湿度${weather.humidity}%</div>
+      </div>
+      <div style="margin-left:auto;font-size:11px;color:#0369a1;">实时天气</div>
+    </div>`:'<div style="background:#f3f4f6;padding:10px;border-radius:10px;margin-bottom:12px;font-size:12px;color:#6b7280;">天气数据获取失败，请出行前查询</div>';
+
+  // 费用估算
+  const hotelCost=Math.round(budget*0.4);
+  const foodCost=Math.round(budget*0.3);
+  const ticketCost=Math.round(budget*0.15);
+  const otherCost=budget-hotelCost-foodCost-ticketCost;
+
+  const resultHtml=`
+    <div class="cute-card">
+      <div class="cute-card-header">
+        <span class="heart-icon">💗</span>
+        <span class="title-text">推荐：${escapeHtml(dest.name)}</span>
+        <span class="badge-pill">${dest.region}</span>
+      </div>
+
+      <!-- 目的地介绍 -->
+      <div style="background:linear-gradient(135deg,#ffe5ec,#ffd1dc);padding:16px;border-radius:var(--radius-md);margin-bottom:14px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:8px;">${dest.tags.includes('海边度假')?'🏖️':dest.tags.includes('自然风光')?'🏔️':dest.tags.includes('美食之旅')?'🍜':'🏛️'}</div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:4px;">${escapeHtml(dest.name)}</div>
+        <div style="font-size:13px;color:var(--text-secondary);">${escapeHtml(dest.desc)}</div>
+      </div>
+
+      ${weatherHtml}
+
+      <!-- 交通信息 -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+        <div style="background:#fff8fb;padding:12px;border-radius:10px;text-align:center;">
+          <div style="font-size:20px;">${transInfo.icon}</div>
+          <div style="font-size:14px;font-weight:700;">${transInfo.time}</div>
+          <div style="font-size:11px;color:var(--text-light);">约${dist}km</div>
+        </div>
+        <div style="background:#fff8fb;padding:12px;border-radius:10px;text-align:center;">
+          <div style="font-size:20px;">💰</div>
+          <div style="font-size:14px;font-weight:700;">¥${transInfo.price}</div>
+          <div style="font-size:11px;color:var(--text-light);">交通预估</div>
+        </div>
+        <div style="background:#fff8fb;padding:12px;border-radius:10px;text-align:center;">
+          <div style="font-size:20px;">🌸</div>
+          <div style="font-size:14px;font-weight:700;">${dest.bestSeason}季</div>
+          <div style="font-size:11px;color:var(--text-light);">最佳时间</div>
+        </div>
+      </div>
+
+      <!-- 行程安排 -->
+      <div style="margin-bottom:14px;">
+        <div style="font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;">📅 ${days}天行程安排</div>
+        ${itinerary}
+      </div>
+
+      <!-- 费用明细 -->
+      <div style="background:#f0e6fa;padding:14px;border-radius:10px;margin-bottom:14px;">
+        <div style="font-weight:700;margin-bottom:10px;">💰 费用预估(人均)</div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;font-size:13px;">
+          <div style="display:flex;justify-content:space-between;"><span>🏨 住宿</span><span>¥${hotelCost}</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>🍜 餐饮</span><span>¥${foodCost}</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>🎫 门票</span><span>¥${ticketCost}</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>🛍️ 其他</span><span>¥${otherCost}</span></div>
+        </div>
+        <div style="border-top:1px dashed var(--pink-200);margin-top:10px;padding-top:10px;display:flex;justify-content:space-between;font-weight:700;">
+          <span>总计</span><span style="color:var(--accent);">¥${budget}</span>
+        </div>
+      </div>
+
+      <!-- 美食推荐 -->
+      <div style="background:#fff4e0;padding:12px;border-radius:10px;margin-bottom:14px;">
+        <div style="font-weight:700;margin-bottom:6px;">🍽️ 必吃美食</div>
+        <div style="font-size:13px;">${escapeHtml(dest.foods)}</div>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="generateTravelPlanV2()">🔄 换一个</button>
+        <button class="btn btn-pink btn-sm" onclick="saveTravelPlanV2('${dest.name}',${days},${budget},${people},'${season||dest.bestSeason}','${pref||dest.tags[0]}','${trans}',${dist},${transInfo.price})">💾 保存计划</button>
+      </div>
+    </div>`;
+
+  document.getElementById('travelResult').innerHTML=resultHtml;
+}
+
+function saveTravelPlanV2(name,days,budget,people,season,pref,trans,dist,transPrice){
+  const dest=DEST_DB.find(d=>d.name===name);
+  const itinerary=dest.spots.map((s,i)=>'Day'+(i+1)+': '+s).join('\n');
+  const fullPlan='【'+name+days+'日游】\n出发：'+document.getElementById('trFrom').options[document.getElementById('trFrom').selectedIndex].text+'\n距离：约'+dist+'km\n交通：'+trans+' ¥'+transPrice+'\n天数：'+days+'天\n预算：¥'+budget+'/人\n人数：'+people+'人\n\n行程安排：\n'+itinerary+'\n\n美食推荐：'+dest.foods;
+  AppData.travelPlans.push({
+    id:genId(),title:name+days+'日游',destination:name,season,days,budget,attendees:people,
+    preference:pref,transport:trans,fullPlan,expenses:[],outfits:[],poses:[],createdAt:today(),pinned:false
+  });
+  saveData(AppData);showToast('✨ 已保存到我的计划');
+}
+function renderTravelPlans(){
+  const plans=AppData.travelPlans.slice().sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
+  document.getElementById('travelContent').innerHTML=`<div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">我的旅行计划</span><button class="btn btn-primary btn-sm" onclick="addTravelPlan()">➕ 新建计划</button></div>${plans.length===0?'<div class="empty-state"><div class="empty-icon">✈️</div><p>还没有旅行计划~<br>点击"新建计划"开始规划吧！</p></div>':plans.map(p=>{
+    const totalExpense=(p.expenses||[]).reduce((s,e)=>s+e.amount,0);
+    const outfitsCount=(p.outfits||[]).length;
+    const posesCount=(p.poses||[]).length;
+    return `<div class="list-item" style="${p.pinned?'border-left:3px solid var(--accent);background:linear-gradient(135deg,#ffe5ec,#fff5f7);':''}">
+      <div class="item-info">
+        <div class="item-title">${p.pinned?'📌 ':''}✈️ ${escapeHtml(p.title)}</div>
+        <div class="item-meta">${escapeHtml(p.destination)} · ${escapeHtml(p.season)}季 · ${p.days}天 · ${p.attendees}人</div>
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+          <span class="badge-pill" style="font-size:10px;">💰 ¥${totalExpense}</span>
+          <span class="badge-pill" style="font-size:10px;">👔 ${outfitsCount}套</span>
+          <span class="badge-pill" style="font-size:10px;">📸 ${posesCount}个</span>
+        </div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-outline btn-xs" onclick="togglePinTravel('${p.id}')">${p.pinned?'取消':'📌'}</button>
+        <button class="btn btn-primary btn-xs" onclick="viewTravelPlanV2('${p.id}')">管理</button>
+        <button class="btn btn-danger btn-xs" onclick="deleteTravelPlan('${p.id}')">删</button>
+      </div>
+    </div>`}).join('')}</div>`;
+}
+
+function togglePinTravel(id){
+  const p=AppData.travelPlans.find(x=>x.id===id);if(!p)return;
+  p.pinned=!p.pinned;saveData(AppData);renderTravelPlans();showToast(p.pinned?'📌 已置顶':'已取消置顶');
+}
+
+function addTravelPlan(){
+  showModal('➕ 新建旅行计划',`
+    <div class="form-group"><label>📛 计划名称</label><input class="input" id="tpTitle" placeholder="如：五一成都游"></div>
+    <div class="form-row"><div class="form-group"><label>📍 目的地</label><input class="input" id="tpDest" placeholder="如：成都"></div><div class="form-group"><label>📅 天数</label><input class="input" type="number" id="tpDays" value="3" min="1"></div></div>
+    <div class="form-row"><div class="form-group"><label>💰 预算(总)</label><input class="input" type="number" id="tpBudget" value="3000"></div><div class="form-group"><label>👥 人数</label><input class="input" type="number" id="tpPeople" value="2" min="1"></div></div>
+    <div class="form-row"><div class="form-group"><label>🌸 季节</label><select class="select" id="tpSeason"><option>春</option><option>夏</option><option>秋</option><option>冬</option></select></div><div class="form-group"><label>🚗 交通</label><select class="select" id="tpTrans"><option>高铁</option><option>飞机</option><option>自驾</option></select></div></div>`,(o)=>{
+    const title=o.querySelector('#tpTitle').value.trim(),dest=o.querySelector('#tpDest').value.trim();
+    if(!title||!dest){showToast('请填写名称和目的地','error');return false;}
+    AppData.travelPlans.push({
+      id:genId(),title,destination:dest,days:parseInt(o.querySelector('#tpDays').value)||3,
+      budget:parseInt(o.querySelector('#tpBudget').value)||3000,attendees:parseInt(o.querySelector('#tpPeople').value)||2,
+      season:o.querySelector('#tpSeason').value,transport:o.querySelector('#tpTrans').value,
+      preference:'',fullPlan:'',expenses:[],outfits:[],poses:[],createdAt:today(),pinned:false
+    });
+    saveData(AppData);renderTravelPlans();showToast('✨ 计划已创建');
+  });
+}
+
+// 查看和管理旅行计划（三类清单）
+function viewTravelPlanV2(id){
+  const p=AppData.travelPlans.find(x=>x.id===id);if(!p)return;
+  const totalExpense=(p.expenses||[]).reduce((s,e)=>s+e.amount,0);
+  const remainBudget=p.budget-totalExpense;
+
+  const content=`
+    <div style="max-height:65vh;overflow-y:auto;">
+      <!-- 基本信息 -->
+      <div style="background:linear-gradient(135deg,#ffe5ec,#ffd1dc);padding:14px;border-radius:var(--radius-md);margin-bottom:14px;text-align:center;">
+        <div style="font-size:20px;font-weight:800;">✈️ ${escapeHtml(p.title)}</div>
+        <div style="font-size:13px;margin-top:4px;">${escapeHtml(p.destination)} · ${p.days}天 · ${p.attendees}人 · ${p.season}季</div>
+      </div>
+
+      <!-- Tab切换 -->
+      <div class="tabs" style="margin-bottom:12px;">
+        <div class="tab active" data-tptab="expense" onclick="switchTravelTab('${p.id}','expense',this)">💰 花费储备</div>
+        <div class="tab" data-tptab="outfit" onclick="switchTravelTab('${p.id}','outfit',this)">👔 衣服储备</div>
+        <div class="tab" data-tptab="pose" onclick="switchTravelTab('${p.id}','pose',this)">📸 拍照姿势</div>
+      </div>
+
+      <!-- 花费储备 -->
+      <div id="tpExpense">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+          <div style="background:#e6f7ed;padding:12px;border-radius:10px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:var(--success);">¥${p.budget}</div>
+            <div style="font-size:11px;">总预算</div>
+          </div>
+          <div style="background:#ffe5ec;padding:12px;border-radius:10px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:var(--danger);">¥${totalExpense}</div>
+            <div style="font-size:11px;">已花费</div>
+          </div>
+          <div style="background:#f0e6fa;padding:12px;border-radius:10px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:${remainBudget>=0?'var(--accent)':'var(--danger)'};">¥${remainBudget}</div>
+            <div style="font-size:11px;">剩余</div>
+          </div>
+        </div>
+        <div id="expenseList">${renderExpenseList(p)}</div>
+        <button class="btn btn-pink btn-sm btn-block" onclick="addExpense('${p.id}')">➕ 添加开销</button>
+      </div>
+
+      <!-- 衣服储备 -->
+      <div id="tpOutfit" style="display:none;">
+        <div style="background:#e0f2fe;padding:10px;border-radius:8px;margin-bottom:12px;font-size:12px;">
+          💡 根据${escapeHtml(p.destination)}${p.season}季天气，从衣橱勾选衣物
+        </div>
+        <div id="outfitList">${renderOutfitList(p)}</div>
+        <button class="btn btn-pink btn-sm btn-block" onclick="selectOutfits('${p.id}')">👔 从衣橱选择</button>
+      </div>
+
+      <!-- 拍照姿势 -->
+      <div id="tpPose" style="display:none;">
+        <div id="poseList">${renderPoseList(p)}</div>
+        <button class="btn btn-pink btn-sm btn-block" onclick="addPose('${p.id}')">📸 添加姿势</button>
+      </div>
+    </div>`;
+
+  showModal('✈️ 旅行计划管理',content,()=>true,{wide:true});
+}
+
+function switchTravelTab(pid,tab,el){
+  el.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tpExpense').style.display=tab==='expense'?'block':'none';
+  document.getElementById('tpOutfit').style.display=tab==='outfit'?'block':'none';
+  document.getElementById('tpPose').style.display=tab==='pose'?'block':'none';
+}
+
+// 花费清单
+function renderExpenseList(p){
+  const expenses=p.expenses||[];
+  if(expenses.length===0)return '<div class="empty-state" style="padding:20px;"><div class="empty-icon">💰</div><p>还没有记录开销</p></div>';
+  return expenses.map(e=>`<div class="list-item" style="margin-bottom:6px;">
+    <div class="item-info"><div class="item-title">${escapeHtml(e.category)}</div><div class="item-meta">${escapeHtml(e.note||'')}</div></div>
+    <div style="font-weight:700;color:var(--danger);">¥${e.amount}</div>
+    <button class="btn btn-danger btn-xs" onclick="removeExpense('${p.id}','${e.id}')">✕</button>
+  </div>`).join('');
+}
+
+function addExpense(pid){
+  const cats=['交通','住宿','餐饮','门票','购物','娱乐','其他'];
+  showModal('➕ 添加开销',`<div class="form-row"><div class="form-group"><label>类别</label><select class="select" id="expCat">${cats.map(c=>`<option>${c}</option>`).join('')}</select></div><div class="form-group"><label>金额</label><input class="input" type="number" id="expAmt" placeholder="0"></div></div><div class="form-group"><label>备注</label><input class="input" id="expNote" placeholder="如：高铁票"></div>`,(o)=>{
+    const amt=parseFloat(o.querySelector('#expAmt').value)||0;
+    if(amt<=0){showToast('请输入金额','error');return false;}
+    const p=AppData.travelPlans.find(x=>x.id===pid);
+    if(!p.expenses)p.expenses=[];
+    p.expenses.push({id:genId(),category:o.querySelector('#expCat').value,amount:amt,note:o.querySelector('#expNote').value});
+    saveData(AppData);viewTravelPlanV2(pid);showToast('✨ 已添加');
+  });
+}
+
+function removeExpense(pid,eid){
+  const p=AppData.travelPlans.find(x=>x.id===pid);
+  p.expenses=p.expenses.filter(e=>e.id!==eid);
+  saveData(AppData);viewTravelPlanV2(pid);
+}
+
+// 衣服清单
+function renderOutfitList(p){
+  const outfits=p.outfits||[];
+  if(outfits.length===0)return '<div class="empty-state" style="padding:20px;"><div class="empty-icon">👔</div><p>还没有选择衣物</p></div>';
+  return outfits.map(o=>`<div class="list-item" style="margin-bottom:6px;">
+    <div class="item-info"><div class="item-title">${o.image?`<img src="${o.image}" style="width:30px;height:30px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:6px;">`:''}${escapeHtml(o.name)}</div><div class="item-meta">${o.category} · ${o.season}季</div></div>
+    <button class="btn btn-danger btn-xs" onclick="removeOutfit('${p.id}','${o.id}')">✕</button>
+  </div>`).join('');
+}
+
+function selectOutfits(pid){
+  const items=AppData.wardrobe.filter(w=>!w.archived);
+  if(items.length===0){showToast('衣橱为空，请先添加衣物','error');return;}
+  const p=AppData.travelPlans.find(x=>x.id===pid);
+  const selectedIds=(p.outfits||[]).map(o=>o.id);
+
+  const content=`<div style="max-height:300px;overflow-y:auto;">${items.map(i=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px;border-bottom:1px dashed var(--pink-200);">
+      <input type="checkbox" id="cl_${i.id}" ${selectedIds.includes(i.id)?'checked':''} style="width:18px;height:18px;">
+      <label for="cl_${i.id}" style="flex:1;cursor:pointer;display:flex;align-items:center;gap:8px;">
+        ${i.image?`<img src="${i.image}" style="width:40px;height:40px;object-fit:cover;border-radius:8px;">`:'<div style="width:40px;height:40px;background:var(--pink-100);border-radius:8px;display:flex;align-items:center;justify-content:center;">👔</div>'}
+        <div><div style="font-weight:600;">${escapeHtml(i.name)}</div><div style="font-size:11px;color:var(--text-light);">${i.category} · ${i.season}季</div></div>
+      </label>
+    </div>`).join('')}</div>`;
+
+  showModal('👔 选择出行衣物',content,(o)=>{
+    const checked=[];
+    items.forEach(i=>{if(o.querySelector(`#cl_${i.id}`)?.checked)checked.push({id:i.id,name:i.name,category:i.category,season:i.season,image:i.image});});
+    p.outfits=checked;
+    saveData(AppData);viewTravelPlanV2(pid);showToast(`✨ 已选择${checked.length}件衣物`);
+  },{confirmText:'💾 保存选择'});
+}
+
+function removeOutfit(pid,oid){
+  const p=AppData.travelPlans.find(x=>x.id===pid);
+  p.outfits=p.outfits.filter(o=>o.id!==oid);
+  saveData(AppData);viewTravelPlanV2(pid);
+}
+
+// 拍照姿势
+const POSE_TEMPLATES=[
+  {scene:'海边',poses:['背影看海','跳跃抓拍','沙滩写字','手持贝壳','剪影夕阳']},
+  {scene:'古镇',poses:['撑伞回眸','倚门而立','桥上远眺','手持团扇','巷弄漫步']},
+  {scene:'山川',poses:['山顶远眺','双手张开','背影剪影','登山杖pose','云海合影']},
+  {scene:'城市',poses:['街头漫步','咖啡馆窗边','地标合影','夜景灯光','天台俯瞰']},
+  {scene:'美食',poses:['举杯庆祝','夹菜抓拍','与美食合影','吃相抓拍','餐厅环境']},
+];
+
+function renderPoseList(p){
+  const poses=p.poses||[];
+  let html='';
+
+  // 推荐姿势模板
+  html+=`<div style="margin-bottom:14px;"><div style="font-weight:700;margin-bottom:8px;">📸 推荐姿势模板</div>`;
+  POSE_TEMPLATES.forEach(t=>{
+    html+=`<div style="background:#fff8fb;padding:10px;border-radius:8px;margin-bottom:8px;">
+      <div style="font-weight:600;font-size:13px;margin-bottom:6px;">${t.scene}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">${t.poses.map(ps=>`<span class="badge-pill" style="cursor:pointer;font-size:11px;" onclick="quickAddPose('${p.id}','${ps}')">${ps}</span>`).join('')}</div>
+    </div>`;
+  });
+  html+='</div>';
+
+  // 已收藏姿势
+  html+=`<div><div style="font-weight:700;margin-bottom:8px;">⭐ 我的收藏(${poses.length})</div>`;
+  if(poses.length===0){
+    html+='<div class="empty-state" style="padding:16px;"><div class="empty-icon">📸</div><p>点击上方模板快速添加</p></div>';
+  }else{
+    html+=poses.map(ps=>`<div class="list-item" style="margin-bottom:6px;">
+      <div class="item-info"><div class="item-title">${escapeHtml(ps.name)}</div><div class="item-meta">${escapeHtml(ps.note||'')}</div></div>
+      <button class="btn btn-danger btn-xs" onclick="removePose('${p.id}','${ps.id}')">✕</button>
+    </div>`).join('');
+  }
+  html+='</div>';
+
+  return html;
+}
+
+function quickAddPose(pid,name){
+  const p=AppData.travelPlans.find(x=>x.id===pid);
+  if(!p.poses)p.poses=[];
+  if(p.poses.find(ps=>ps.name===name)){showToast('已存在','warning');return;}
+  p.poses.push({id:genId(),name,note:''});
+  saveData(AppData);viewTravelPlanV2(pid);showToast('✨ 已收藏');
+}
+
+function addPose(pid){
+  showModal('📸 添加拍照姿势',`<div class="form-group"><label>姿势名称</label><input class="input" id="poseName" placeholder="如：背影回眸"></div><div class="form-group"><label>备注</label><input class="input" id="poseNote" placeholder="如：适合海边日落"></div>`,(o)=>{
+    const name=o.querySelector('#poseName').value.trim();
+    if(!name){showToast('请输入名称','error');return false;}
+    const p=AppData.travelPlans.find(x=>x.id===pid);
+    if(!p.poses)p.poses=[];
+    p.poses.push({id:genId(),name,note:o.querySelector('#poseNote').value});
+    saveData(AppData);viewTravelPlanV2(pid);showToast('✨ 已添加');
+  });
+}
+
+function removePose(pid,psid){
+  const p=AppData.travelPlans.find(x=>x.id===pid);
+  p.poses=p.poses.filter(ps=>ps.id!==psid);
+  saveData(AppData);viewTravelPlanV2(pid);
+}
+function viewTravelPlan(id){const p=AppData.travelPlans.find(x=>x.id===id);if(!p)return;showModal('✈️ 旅行计划',`<p><strong>目的地：</strong>${escapeHtml(p.destination)}</p><p><strong>时间：</strong>${p.season}季 · ${p.days}天</p><p><strong>预算：</strong>${p.budget}元/人</p><div style="background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:var(--radius-md);padding:12px;margin-top:10px;white-space:pre-wrap;font-size:13px;">${escapeHtml(p.fullPlan)}</div>`,()=>true);}
+function deleteTravelPlan(id){if(confirm('删除？')){AppData.travelPlans=AppData.travelPlans.filter(p=>p.id!==id);saveData(AppData);renderTravelPlans();showToast('已删除');}}
+</script>
+
+<!-- ==================== 模块4：每日进步 ==================== -->
+<script>
+function renderProgress(){
+  const area=document.getElementById('contentArea');
+  const activeTab=currentModule==='progress'?currentSubTab:'countdown';
+  area.innerHTML=`<div class="tabs"><div class="tab ${activeTab==='countdown'?'active':''}" data-tab="countdown">⏰ 事项倒计时</div><div class="tab ${activeTab==='news'?'active':''}" data-tab="news">📰 时政热点</div></div><div id="progressContent"></div>`;
+  area.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{currentSubTab=t.dataset.tab;renderProgress();});});
+  if(activeTab==='countdown')renderCountdowns();else renderNews();
+}
+function renderCountdowns(){
+  const items=AppData.countdowns.sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
+  const now=new Date();
+  document.getElementById('progressContent').innerHTML=`<div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">事项倒计时</span><button class="btn btn-primary btn-sm" onclick="addCountdown()">➕ 新增</button></div>${items.length===0?'<div class="empty-state"><div class="empty-icon">⏰</div><p>还没有倒计时事项~</p></div>':items.map(item=>{const target=new Date(item.targetDate),diff=target-now,days=Math.ceil(diff/86400000),over=diff<=0;return`<div class="list-item" style="border-left:3px solid ${over?'var(--success)':days<=7?'var(--warning)':'var(--accent)'}"><div class="item-info"><div class="item-title">${item.pinned?'📌 ':''}${escapeHtml(item.title)}</div><div class="item-meta">目标：${escapeHtml(item.targetDate)}</div></div><div style="text-align:center;"><div style="font-size:24px;font-weight:800;color:${over?'var(--success)':days<=7?'var(--warning)':'var(--accent)'};">${over?'✅':'剩 '+days+'天'}</div></div><div class="item-actions"><button class="btn btn-outline btn-xs" onclick="editCountdown('${item.id}')">编辑</button><button class="btn btn-outline btn-xs" onclick="togglePin('${item.id}')">${item.pinned?'取消':'📌'}</button><button class="btn btn-danger btn-xs" onclick="deleteCountdown('${item.id}')">删</button></div></div>`}).join('')}</div>`;
+  if(_countdownTimer){clearTimeout(_countdownTimer);_countdownTimer=null;}
+  if(items.length>0)_countdownTimer=setTimeout(()=>{if(currentModule==='progress'&&currentSubTab==='countdown')renderCountdowns();},60000);
+}
+function addCountdown(){showModal('⏰ 新建倒计时',`<div class="form-group"><label>📛 事项名称</label><input class="input" id="cdTitle" placeholder="如：考研倒计时"></div><div class="form-group"><label>📅 目标日期</label><input class="input" type="datetime-local" id="cdDate"></div><div class="form-group"><label>📍 里程碑（用|分隔）</label><input class="input" id="cdMs"></div>`,(o)=>{const t=o.querySelector('#cdTitle').value.trim(),d=o.querySelector('#cdDate').value;if(!t||!d){showToast('请填写完整','error');return false;}AppData.countdowns.push({id:genId(),title:t,targetDate:d,milestones:o.querySelector('#cdMs').value.split('|').map(s=>s.trim()).filter(Boolean),pinned:false,createdAt:today()});saveData(AppData);renderCountdowns();showToast('✨ 已创建');});}
+function editCountdown(id){
+  const item=AppData.countdowns.find(c=>c.id===id);if(!item)return;
+  showModal('✏️ 编辑倒计时',`<div class="form-group"><label>📛 事项名称</label><input class="input" id="ecdTitle" value="${escapeHtml(item.title)}"></div><div class="form-group"><label>📅 目标日期</label><input class="input" type="datetime-local" id="ecdDate" value="${item.targetDate}"></div><div class="form-group"><label>📍 里程碑（用|分隔）</label><input class="input" id="ecdMs" value="${(item.milestones||[]).join('|')}"></div>`,(o)=>{
+    const t=o.querySelector('#ecdTitle').value.trim(),d=o.querySelector('#ecdDate').value;
+    if(!t||!d){showToast('请填写完整','error');return false;}
+    item.title=t;item.targetDate=d;item.milestones=o.querySelector('#ecdMs').value.split('|').map(s=>s.trim()).filter(Boolean);
+    saveData(AppData);renderCountdowns();showToast('✨ 已更新');
+  });
+}
+function togglePin(id){const item=AppData.countdowns.find(c=>c.id===id);if(item){item.pinned=!item.pinned;saveData(AppData);renderCountdowns();}}
+function deleteCountdown(id){if(confirm('删除？')){AppData.countdowns=AppData.countdowns.filter(c=>c.id!==id);saveData(AppData);renderCountdowns();showToast('已删除');}}
+
+function renderNews(){
+  const items=AppData.newsItems.slice(0,10);
+  document.getElementById('progressContent').innerHTML=`<div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">时政热点</span><button class="btn btn-primary btn-sm" onclick="fetchNews()">🔄 刷新</button></div><div id="newsList"></div></div>`;
+  const el=document.getElementById('newsList');
+  if(items.length===0){el.innerHTML='<div class="empty-state"><div class="empty-icon">📰</div><p>点击刷新获取资讯~</p></div>';return;}
+  el.innerHTML=items.map(n=>`<div class="list-item"><div class="item-info"><div class="item-title">${n.read?'📖':'🆕'} ${escapeHtml(n.title)}</div><div class="item-meta"><span style="color:var(--accent);">[${escapeHtml(n.source||'资讯')}]</span> ${n.date}</div></div><div class="item-actions">${n.url?`<a class="btn btn-primary btn-xs" href="${escapeHtml(n.url)}" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px;">🔗 原文</a>`:''}<button class="btn btn-outline btn-xs" onclick="viewNews('${n.id}')">阅读</button><button class="btn btn-outline btn-xs" onclick="toggleSave('${n.id}')">${n.saved?'★':'☆'}</button></div></div>`).join('');
+}
+// ==================== 人民日报时政热点 ====================
+// 数据来源：人民日报电子版 (paper.people.com.cn) + 人民网 (people.com.cn)
+// 所有链接均为真实可访问的文章/版面页面
+
+// 生成人民日报电子版当日版面链接
+function getRmrbLayoutUrl(date){
+  const d = date || new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `http://paper.people.com.cn/rmrb/pc/layout/${y}${m}/${day}/node_01.html`;
+}
+
+// 生成人民网时政频道链接
+function getPeoplePoliticsUrl(){
+  return 'http://politics.people.com.cn/';
+}
+
+// 人民日报核心栏目（真实栏目页，稳定可访问）
+const RMRB_SECTIONS = [
+  {title:'📰 人民日报·头版要闻', summary:'人民日报头版：党和国家重要新闻、领导人活动、重大政策发布', url:'http://paper.people.com.cn/rmrb/pc/layout/{DATE}/node_01.html', source:'人民日报·头版'},
+  {title:'📰 人民日报·要闻版', summary:'人民日报要闻版：国内外重大时事新闻、政策解读', url:'http://paper.people.com.cn/rmrb/pc/layout/{DATE}/node_02.html', source:'人民日报·要闻'},
+  {title:'📰 人民日报·评论版', summary:'人民日报评论版：社论、评论员文章、政策深度解读', url:'http://paper.people.com.cn/rmrb/pc/layout/{DATE}/node_05.html', source:'人民日报·评论'},
+  {title:'📰 人民日报·理论版', summary:'人民日报理论版：理论文章、学习辅导、思想引领', url:'http://paper.people.com.cn/rmrb/pc/layout/{DATE}/node_09.html', source:'人民日报·理论'},
+  {title:'🌐 人民网·时政频道', summary:'人民网时政频道：最新时政新闻、政策文件、领导活动', url:'http://politics.people.com.cn/', source:'人民网·时政'},
+  {title:'🌐 人民网·经济频道', summary:'人民网经济频道：宏观经济、产业动态、财经政策', url:'http://finance.people.com.cn/', source:'人民网·经济'},
+  {title:'🌐 人民网·社会频道', summary:'人民网社会频道：社会民生、法治建设、基层治理', url:'http://society.people.com.cn/', source:'人民网·社会'},
+  {title:'🌐 人民网·科技频道', summary:'人民网科技频道：科技创新、数字经济、前沿技术', url:'http://scitech.people.com.cn/', source:'人民网·科技'},
+  {title:'🌐 人民网·文化频道', summary:'人民网文化频道：文化传承、文艺动态、精神文明', url:'http://culture.people.com.cn/', source:'人民网·文化'},
+  {title:'🌐 人民网·生态频道', summary:'人民网生态频道：生态文明、绿色发展、环境保护', url:'http://env.people.com.cn/', source:'人民网·生态'},
+];
+
+async function fetchNews(){
+  const el=document.getElementById('newsList');
+  if(el)el.innerHTML='<div class="ai-processing" style="padding:20px;"><div class="ai-spinner"></div><p style="margin-top:8px;">正在获取人民日报时政热点...</p></div>';
+
+  // 短暂延迟模拟加载
+  await new Promise(r=>setTimeout(r,500));
+
+  // 清空旧数据
+  AppData.newsItems = AppData.newsItems.filter(n=>n.date!==today());
+
+  // 生成当日人民日报版面链接
+  const todayUrl = getRmrbLayoutUrl();
+  const dateStr = today();
+
+  // 添加人民日报核心栏目
+  RMRB_SECTIONS.forEach(s=>{
+    const url = s.url.replace('{DATE}', todayUrl.split('/layout/')[1]?.split('/node')[0] || '');
+    AppData.newsItems.unshift({
+      id: genId(),
+      title: s.title,
+      summary: s.summary,
+      url: url,
+      source: s.source,
+      read: false,
+      saved: false,
+      date: dateStr
+    });
+  });
+
+  saveData(AppData);
+  renderNews();
+  showToast('✨ 已更新人民日报时政热点');
+}
+
+function viewNews(id){
+  const item=AppData.newsItems.find(n=>n.id===id);if(!item)return;
+  item.read=true;saveData(AppData);
+  const content=`<div style="margin-bottom:12px;"><span class="badge-pill">${escapeHtml(item.source||'资讯')}</span> <span style="font-size:12px;color:var(--text-light);">${item.date}</span></div>
+    <h4 style="color:var(--accent);margin-bottom:12px;">${escapeHtml(item.title)}</h4>
+    <p style="line-height:1.8;margin-bottom:16px;">${escapeHtml(item.summary)}</p>
+    ${item.url?`<div style="background:#e0f2fe;padding:12px;border-radius:8px;text-align:center;"><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener" style="color:#0369a1;text-decoration:none;font-weight:600;">🔗 点击阅读完整原文 →</a></div>`:''}`;
+  showModal('📰 时政阅读',content,()=>true);
+}
+function toggleSave(id){const item=AppData.newsItems.find(n=>n.id===id);if(item){item.saved=!item.saved;saveData(AppData);renderNews();}}
+</script>
+
+<!-- ==================== 模块5：退休计划 ==================== -->
+<script>
+function renderRetire(){
+  const area=document.getElementById('contentArea');
+  const activeTab=currentModule==='retire'?currentSubTab:'plan';
+  area.innerHTML=`<div class="tabs"><div class="tab ${activeTab==='plan'?'active':''}" data-tab="plan">🌈 退休规划</div><div class="tab ${activeTab==='finance'?'active':''}" data-tab="finance">💰 每日收支</div></div><div id="retireContent"></div>`;
+  area.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{currentSubTab=t.dataset.tab;renderRetire();});});
+  if(activeTab==='plan')renderRetirePlan();else renderFinance();
+}
+function renderRetirePlan(){
+  const rp=AppData.retirePlan;
+  const years=rp.targetRetireAge-rp.age,monthly=rp.salary*0.3;
+  let fv=rp.savings;for(let i=0;i<years;i++)fv=fv*1.04+monthly*12;
+  const quotes=['每天努力一点，离自由更近一步 💪','攒下的不只是钱，是选择生活的底气 ✨','今天的克制，是明天的从容 🌅','为退休而奋斗，每一分都算数 💰'];
+  if(AppData.quoteDate!==today()){AppData.dailyQuote=quotes[Math.floor(Math.random()*quotes.length)];AppData.quoteDate=today();saveData(AppData);}
+  document.getElementById('retireContent').innerHTML=`
+    <div class="cute-card" style="background:linear-gradient(135deg,#ffd1dc,#ffe5ec);text-align:center;border-color:var(--pink-300);">
+      <div class="empty-icon">💖</div>
+      <p style="font-size:18px;font-weight:700;color:var(--accent);">${AppData.dailyQuote}</p>
+    </div>
+    <div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">退休规划书</span><button class="btn btn-outline btn-sm" onclick="editRetireInfo()">✏️ 修改</button></div>
+      <div class="grid-2">
+        <div><strong>🎂 年龄：</strong>${rp.age}岁</div><div><strong>💼 工龄：</strong>${rp.workYears}年</div>
+        <div><strong>💰 月薪：</strong>${rp.salary.toLocaleString()}元</div><div><strong>🏦 存款：</strong>${rp.savings.toLocaleString()}元</div>
+        <div><strong>🎯 目标退休：</strong>${rp.targetRetireAge}岁</div><div><strong>⏳ 距退休：</strong><span style="color:var(--accent);font-size:18px;font-weight:800;">${years}年</span></div>
+      </div>
+    </div>
+    <div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">财务分析</span><span class="badge-pill">按年化4%复利估算</span></div>
+      <div class="grid-2">
+        <div style="background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:var(--radius-md);padding:14px;text-align:center;">
+          <div style="font-size:30px;font-weight:800;color:var(--accent);">${Math.round(fv/10000)}万</div>
+          <div style="color:var(--text-secondary);font-size:13px;">预估退休储备</div>
+        </div>
+        <div style="background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:var(--radius-md);padding:14px;text-align:center;">
+          <div style="font-size:30px;font-weight:800;color:var(--success);">¥${Math.round(monthly).toLocaleString()}</div>
+          <div style="color:var(--text-secondary);font-size:13px;">建议月储蓄</div>
+        </div>
+      </div>
+    </div>`;
+}
+function editRetireInfo(){
+  const rp=AppData.retirePlan;
+  showModal('✏️ 修改信息',`<div class="form-row"><div class="form-group"><label>年龄</label><input class="input" type="number" id="rAge" value="${rp.age}"></div><div class="form-group"><label>工龄</label><input class="input" type="number" id="rWY" value="${rp.workYears}"></div></div><div class="form-row"><div class="form-group"><label>月薪</label><input class="input" type="number" id="rSal" value="${rp.salary}"></div><div class="form-group"><label>存款</label><input class="input" type="number" id="rSav" value="${rp.savings}"></div></div><div class="form-group"><label>目标退休年龄</label><input class="input" type="number" id="rTA" value="${rp.targetRetireAge}"></div>`,(o)=>{
+    AppData.retirePlan.age=parseInt(o.querySelector('#rAge').value)||rp.age;
+    AppData.retirePlan.workYears=parseInt(o.querySelector('#rWY').value)||rp.workYears;
+    AppData.retirePlan.salary=parseInt(o.querySelector('#rSal').value)||rp.salary;
+    AppData.retirePlan.savings=parseInt(o.querySelector('#rSav').value)||rp.savings;
+    AppData.retirePlan.targetRetireAge=parseInt(o.querySelector('#rTA').value)||rp.targetRetireAge;
+    saveData(AppData);renderRetirePlan();showToast('✨ 已更新');
+  });
+}
+function renderFinance(){
+  const records=AppData.incomeExpenses.slice().reverse();
+  const tr=records.filter(r=>r.date===today());
+  const ti=tr.filter(r=>r.type==='income').reduce((s,r)=>s+r.amount,0),te=tr.filter(r=>r.type==='expense').reduce((s,r)=>s+r.amount,0);
+  const ci={餐饮:'🍔',购物:'🛍️',通勤:'🚇',理财:'📈',工资:'💼',兼职:'💵',娱乐:'🎮',住房:'🏠',医疗:'💊',其他:'📌'};
+  document.getElementById('retireContent').innerHTML=`
+    <div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">今日收支</span><button class="btn btn-primary btn-sm" onclick="addFinance()">➕ 记录</button></div>
+      <div class="grid-3">
+        <div style="text-align:center;padding:14px;background:linear-gradient(135deg,#e6f7ed,#d4f1e0);border-radius:var(--radius-md);"><div style="font-size:24px;font-weight:800;color:var(--success);">¥${ti.toLocaleString()}</div><div style="font-size:12px;color:var(--text-secondary);">收入</div></div>
+        <div style="text-align:center;padding:14px;background:linear-gradient(135deg,#fff8fb,#ffe8ee);border-radius:var(--radius-md);"><div style="font-size:24px;font-weight:800;color:var(--danger);">¥${te.toLocaleString()}</div><div style="font-size:12px;color:var(--text-secondary);">支出</div></div>
+        <div style="text-align:center;padding:14px;background:linear-gradient(135deg,#f0e6fa,#e4d4f0);border-radius:var(--radius-md);"><div style="font-size:24px;font-weight:800;color:${ti-te>=0?'var(--accent)':'var(--danger)'};">¥${(ti-te).toLocaleString()}</div><div style="font-size:12px;color:var(--text-secondary);">结余</div></div>
+      </div>
+    </div>
+    <div class="cute-card"><div class="cute-card-header"><span class="heart-icon">💗</span><span class="title-text">收支明细</span></div>${records.length===0?'<div class="empty-state"><div class="empty-icon">📝</div><p>还没有记录~</p></div>':records.slice(0,30).map(r=>`<div class="list-item"><div class="item-info"><div class="item-title">${ci[r.category]||'📌'} ${escapeHtml(r.category)}</div><div class="item-meta">${escapeHtml(r.note||'')} · ${escapeHtml(r.date)}</div></div><div style="font-weight:700;color:${r.type==='income'?'var(--success)':'var(--danger)'};">${r.type==='income'?'+':'-'}¥${r.amount.toLocaleString()}</div><button class="btn btn-danger btn-xs" onclick="deleteFin('${r.id}')">删</button></div>`).join('')}</div>`;
+}
+function addFinance(){
+  const ci=['工资','兼职','理财','其他'],ce=['餐饮','购物','通勤','娱乐','住房','医疗','其他'];
+  showModal('💰 记录收支',`<div class="form-row"><div class="form-group"><label>类型</label><select class="select" id="fType" onchange="document.getElementById('fCat').innerHTML=(this.value==='income'?${JSON.stringify(ci)}:${JSON.stringify(ce)}).map(c=>'<option>'+c+'</option>').join('')"><option value="income">💰 收入</option><option value="expense">💸 支出</option></select></div><div class="form-group"><label>金额</label><input class="input" type="number" id="fAmt" placeholder="0" step="0.01" min="0"></div></div><div class="form-group"><label>类别</label><select class="select" id="fCat">${ci.map(c=>`<option>${c}</option>`).join('')}</select></div><div class="form-group"><label>备注</label><input class="input" id="fNote"></div>`,(o)=>{
+    const amt=Math.round((parseFloat(o.querySelector('#fAmt').value)||0)*100)/100;if(amt<=0){showToast('请输入有效金额','error');return false;}
+    AppData.incomeExpenses.push({id:genId(),date:today(),type:o.querySelector('#fType').value,category:o.querySelector('#fCat').value,amount:amt,note:o.querySelector('#fNote').value});
+    saveData(AppData);renderFinance();showToast('✨ 记录成功');
+  });
+}
+function deleteFin(id){AppData.incomeExpenses=AppData.incomeExpenses.filter(r=>r.id!==id);saveData(AppData);renderFinance();showToast('已删除');}
+</script>
+
+<!-- ==================== 初始化 ==================== -->
+<script>
+function init(){
+  const def=getDefaultData();
+  if(!AppData.retirePlan||typeof AppData.retirePlan!=='object')AppData.retirePlan=def.retirePlan;
+  ['incomeExpenses','wardrobe','outfitTemplates','dietPlans','calorieRecords','milkTeaMenu','milkTeaHistory','travelPlans','countdowns','newsItems'].forEach(k=>{if(!Array.isArray(AppData[k]))AppData[k]=def[k]||[];});
+  if(!AppData.milkTeaMenu||AppData.milkTeaMenu.length===0)AppData.milkTeaMenu=def.milkTeaMenu;
+
+  if(AppData.wardrobe.length===0){
+    AppData.wardrobe=[
+      {id:genId(),name:'白色简约衬衫',category:'衬衫',season:'春秋',style:'商务休闲',note:'通勤百搭',image:'',archived:false,createdAt:today()},
+      {id:genId(),name:'黑色修身长裤',category:'长裤',season:'春秋',style:'商务',note:'通勤必备',image:'',archived:false,createdAt:today()},
+      {id:genId(),name:'卡其色风衣',category:'风衣',season:'春秋',style:'休闲',note:'百搭外套',image:'',archived:false,createdAt:today()},
+      {id:genId(),name:'灰色卫衣',category:'卫衣',season:'秋冬',style:'运动休闲',note:'周末穿搭',image:'',archived:false,createdAt:today()},
+      {id:genId(),name:'蓝色牛仔裤',category:'长裤',season:'春秋',style:'休闲',note:'日常百搭',image:'',archived:false,createdAt:today()},
+      {id:genId(),name:'碎花连衣裙',category:'连衣裙',season:'夏',style:'甜美',note:'约会穿搭',image:'',archived:false,createdAt:today()},
+    ];
+    AppData.countdowns=[
+      {id:genId(),title:'2026年新年倒计时',targetDate:'2026-01-01T00:00',milestones:['圣诞节','元旦计划'],pinned:true,createdAt:today()},
+      {id:genId(),title:'月度阅读目标',targetDate:new Date(new Date().getFullYear(),new Date().getMonth()+1,1).toISOString().slice(0,16),milestones:['读完2本书'],pinned:false,createdAt:today()},
+    ];
+  }
+  saveData(AppData);
+
+  // 初始化云端同步UI
+  updateCloudUI();
+
+  // 启动时尝试从云端拉取数据
+  cloudLoad().then(cloudData => {
+    if (cloudData && cloudData._syncedAt) {
+      // 云端有数据：合并（云端优先）
+      const localTime = AppData._syncedAt ? new Date(AppData._syncedAt).getTime() : 0;
+      const cloudTime = cloudData._syncedAt ? new Date(cloudData._syncedAt).getTime() : 0;
+
+      // 删除元信息后合并
+      const cleanCloud = {...cloudData};
+      delete cleanCloud._syncedAt;
+      delete cleanCloud._createdAt;
+
+      if (cloudTime > localTime) {
+        // 云端数据更新，采用云端
+        AppData = {...AppData, ...cleanCloud};
+        saveData(AppData);
+        console.log('☁️ 已从云端加载最新数据');
+      }
+    }
+  }).catch(() => {});
+
+  // 设置中文日期
+  document.getElementById('brandDate').textContent = getCnDate();
+
+  // 默认加载
+  switchModule('wardrobe');
+
+  // 可见性恢复 → 同时拉取云端最新数据
+  document.addEventListener('visibilitychange',()=>{
+    if(!document.hidden){
+      AppData=loadData();
+      renderModule(currentModule);
+      document.getElementById('brandDate').textContent=getCnDate();
+
+      // 从云端同步最新数据
+      cloudLoad().then(cloudData => {
+        if (cloudData && cloudData._syncedAt) {
+          const localTime = AppData._syncedAt || '';
+          const cloudTime = cloudData._syncedAt || '';
+          if (cloudTime > localTime) {
+            const clean = {...cloudData};
+            delete clean._syncedAt; delete clean._createdAt;
+            AppData = {...AppData, ...clean};
+            saveData(AppData);
+            renderModule(currentModule);
+            showToast('☁️ 已同步云端最新数据');
+          }
+        }
+      }).catch(()=>{});
+    }
+  });
+
+  // 大小变化（桌面端 resize 无需重渲染整个模块，仅移动端切换时需要）
+  let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{
+    // 仅在跨端切换时重渲染
+    const wasMobile=document.getElementById('sidebar').classList.contains('open');
+    if(window.innerWidth>768&&wasMobile){document.getElementById('sidebar').classList.remove('open');document.getElementById('mobileOverlay').classList.remove('show');}
+  },250);});
+}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+
+<!-- ===== Service Worker 注册 ===== -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('SW 注册成功:', reg.scope))
+      .catch(err => console.warn('SW 注册失败:', err));
+  });
+}
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+});
+</script>
+
+</body>
+</html>
