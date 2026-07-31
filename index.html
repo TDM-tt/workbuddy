@@ -732,15 +732,23 @@ button { font-family: var(--font-cute); }
 <script>
 const STORAGE_KEY = 'workbuddy_v3';
 function loadData(){try{const r=localStorage.getItem(STORAGE_KEY);return r?JSON.parse(r):getDefaultData();}catch(e){return getDefaultData();}}
+// 写 localStorage 时剥离衣物 base64 图片（避免爆容量），云端同步用完整数据
+function stripImagesForLocal(d){
+  if(!d||!Array.isArray(d.wardrobe))return d;
+  const copy=JSON.parse(JSON.stringify(d));
+  copy.wardrobe=copy.wardrobe.map(it=>({...it, image:''}));
+  return copy;
+}
 function saveData(d){
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}
+  const slim=stripImagesForLocal(d);
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(slim));}
   catch(e){
     // 存储超限：自动清理最早的历史记录后重试
     try{
       if(Array.isArray(d.milkTeaHistory)&&d.milkTeaHistory.length>20)d.milkTeaHistory=d.milkTeaHistory.slice(-20);
       if(Array.isArray(d.newsItems)&&d.newsItems.length>30)d.newsItems=d.newsItems.slice(0,30);
       if(Array.isArray(d.dietPlans)&&d.dietPlans.length>30)d.dietPlans=d.dietPlans.slice(-30);
-      localStorage.setItem(STORAGE_KEY,JSON.stringify(d));
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(stripImagesForLocal(d)));
       showToast('⚠️ 存储空间不足，已自动清理旧数据','warning');
     }catch(e2){showToast('💔 存储空间不足，请删除部分衣物图片','error');}
   }
@@ -803,26 +811,38 @@ async function deleteImage(id){
 async function migrateOldImages(){
   let migrated=0;
   for(const item of AppData.wardrobe||[]){
-    if(item.image && typeof item.image==='string' && item.image.startsWith('data:')){
-      const imageId = item.imageId || ('img_'+item.id);
+    if(item.image && typeof item.image==='string' && item.image.startsWith('data:') && !item.imageId){
+      const imageId = 'img_'+item.id;
       await saveImage(imageId, item.image);
       item.imageId = imageId;
-      delete item.image;
       migrated++;
     }
   }
   if(migrated>0){
     saveData(AppData);
-    showToast(`✨ 已迁移 ${migrated} 张图片到新存储，空间已释放`);
+    showToast(`✨ 已将 ${migrated} 张图片存入本地缓存`);
   }
 }
 
-// 获取衣物图片显示 URL（兼容旧 image 字段和新 imageId）
+// 获取衣物图片显示 URL：优先本地 IndexedDB 缓存，查不到回退云端 item.image
 async function getClothingImageSrc(item){
   if(!item)return null;
-  if(item.imageId) return await getImage(item.imageId);
+  if(item.imageId){
+    try{ const v=await getImage(item.imageId); if(v) return v; }catch(e){}
+  }
   if(item.image) return item.image;
   return null;
+}
+
+// 反写：把本地 IndexedDB 里的图片补进 AppData.image，使其能随云端同步到其他设备
+async function backfillCloudImages(){
+  let changed=false;
+  for(const item of AppData.wardrobe||[]){
+    if(item.imageId && !item.image){
+      try{ const v=await getImage(item.imageId); if(v){ item.image=v; changed=true; } }catch(e){}
+    }
+  }
+  if(changed){ saveData(AppData); }
 }
 function getDefaultData(){return{
   wardrobe:[],outfitTemplates:[],dietPlans:[],calorieRecords:[],
@@ -1279,7 +1299,7 @@ function batchUploadClothing(){
       const id=genId();
       const imageId='img_'+id;
       await saveImage(imageId, item.image);
-      AppData.wardrobe.push({id,name:item.name,category:item.category,season:item.season,style:item.style,note:item.note||'',imageId,archived:false,createdAt:today()});
+      AppData.wardrobe.push({id,name:item.name,category:item.category,season:item.season,style:item.style,note:item.note||'',imageId,image:item.image||'',archived:false,createdAt:today()});
     }
     saveData(AppData);renderWardrobe();showToast(`✨ AI已识别并导入 ${pendingBatchItems.length} 件衣物！`);
   },{wide:true,confirmText:`💾 全部导入 (${pendingBatchItems.length}件)`});
@@ -1341,7 +1361,7 @@ function addClothing(){
       imageId='img_'+id;
       await saveImage(imageId, urlInput);
     }
-    AppData.wardrobe.push({id,name,category:overlay.querySelector('#newClCat').value,season:overlay.querySelector('#newClSeason').value,style:overlay.querySelector('#newClStyle').value,note:overlay.querySelector('#newClNote').value,imageId,archived:false,createdAt:today()});
+    AppData.wardrobe.push({id,name,category:overlay.querySelector('#newClCat').value,season:overlay.querySelector('#newClSeason').value,style:overlay.querySelector('#newClStyle').value,note:overlay.querySelector('#newClNote').value,imageId,image:uploaded||urlInput||'',archived:false,createdAt:today()});
     saveData(AppData);renderWardrobe();showToast('✨ 衣物添加成功！');
   });
   setTimeout(()=>{
@@ -2454,7 +2474,7 @@ function init(){
   updateCloudUI();
 
   // 启动时尝试从云端拉取数据
-  cloudLoad().then(cloudData => {
+  cloudLoad().then(async cloudData => {
     if (cloudData && cloudData._syncedAt) {
       // 云端有数据：合并（云端优先）
       const localTime = AppData._syncedAt ? new Date(AppData._syncedAt).getTime() : 0;
@@ -2472,6 +2492,8 @@ function init(){
         console.log('☁️ 已从云端加载最新数据');
       }
     }
+    // 把本地 IndexedDB 中的图片补进云端，保证跨设备可显示
+    await backfillCloudImages();
   }).catch(() => {});
 
   // 设置中文日期
@@ -2488,7 +2510,7 @@ function init(){
       document.getElementById('brandDate').textContent=getCnDate();
 
       // 从云端同步最新数据
-      cloudLoad().then(cloudData => {
+      cloudLoad().then(async cloudData => {
         if (cloudData && cloudData._syncedAt) {
           const localTime = AppData._syncedAt || '';
           const cloudTime = cloudData._syncedAt || '';
@@ -2501,6 +2523,8 @@ function init(){
             showToast('☁️ 已同步云端最新数据');
           }
         }
+        // 把本地图片补进云端
+        await backfillCloudImages();
       }).catch(()=>{});
     }
   });
