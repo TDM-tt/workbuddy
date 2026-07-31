@@ -548,6 +548,34 @@ button { font-family: var(--font-cute); }
 .archived-item .cl-img { filter: grayscale(0.5); opacity: 0.85; }
 .archived-item::after { content: "📦"; position: absolute; top: 6px; right: 8px; font-size: 16px; opacity: 0.8; }
 
+/* ==================== 阅读便签 & 开屏页 ==================== */
+.notes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-top:6px;}
+.reading-note{position:relative;background:linear-gradient(135deg,#fff7d6,#ffeec2);border-radius:14px;padding:18px 14px 12px;min-height:120px;box-shadow:0 6px 16px rgba(255,179,71,0.22);border:1px solid #ffe2a8;cursor:pointer;}
+.reading-note:hover{transform:translateY(-3px) rotate(-1deg);transition:transform .15s;}
+.reading-note .rn-pin{position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-size:16px;}
+.reading-note .rn-text{font-size:13px;line-height:1.6;color:#6b5a2e;white-space:pre-wrap;word-break:break-word;max-height:150px;overflow:auto;}
+.reading-note .rn-meta{font-size:11px;color:#a08a4a;margin-top:8px;}
+.reading-note .rn-actions{display:none;gap:6px;margin-top:8px;justify-content:flex-end;}
+.reading-note.expanded .rn-actions{display:flex;}
+.reading-note.expanded{box-shadow:0 8px 22px rgba(255,179,71,0.38);}
+.reading-note .rn-hint{font-size:10px;color:#c9b98e;margin-left:6px;opacity:.9;}
+.reading-note.expanded .rn-hint{display:none;}
+.reading-note .rn-source{font-size:12px;color:#8a6b2e;margin-top:6px;font-style:italic;word-break:break-word;}
+.rn-search{margin:0 0 12px;}
+.rn-search .input{width:100%;box-sizing:border-box;}
+#splashScreen{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffd9e6 0%,#ffeef4 55%,#e8f0ff 100%);padding:24px;overflow:auto;}
+#splashScreen .splash-inner{width:100%;max-width:460px;text-align:center;animation:fadeIn .4s;}
+#splashScreen .splash-logo{font-size:64px;animation:beat 1.6s infinite;}
+#splashScreen .splash-title{font-size:26px;font-weight:800;color:#d44e74;margin-top:6px;}
+#splashScreen .splash-date{font-size:14px;color:#8a6b78;margin-top:4px;}
+#splashScreen .splash-card{margin:22px 0;background:rgba(255,255,255,0.72);border-radius:20px;padding:28px 22px;box-shadow:0 10px 30px rgba(212,78,116,0.18);}
+#splashScreen .splash-note-text{font-size:17px;line-height:1.7;color:#5a4350;white-space:pre-wrap;word-break:break-word;}
+#splashScreen .splash-note-meta{font-size:12px;color:#b08a98;margin-top:14px;}
+#splashScreen .splash-empty{font-size:18px;color:#d44e74;font-weight:700;}
+#splashScreen .splash-enter{font-size:16px;padding:12px 30px;margin-top:6px;}
+#splashScreen .splash-hint{font-size:12px;color:#9a7b88;margin-top:14px;}
+@keyframes beat{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+
 /* ==================== 上传区域 ==================== */
 .upload-zone {
   border: 2.5px dashed var(--pink-300);
@@ -708,6 +736,7 @@ button { font-family: var(--font-cute); }
       <div class="nav-sub">
         <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('progress','countdown')">⏰ 事项倒计时</div>
         <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('progress','news')">📰 时政热点</div>
+        <div class="nav-sub-item" onclick="event.stopPropagation();switchModule('progress','reading')">📚 阅读记录</div>
       </div>
     </div>
     <div class="nav-group" data-module="retire">
@@ -869,7 +898,7 @@ async function backfillCloudImages(){
   if(changed){ saveData(AppData); }
 }
 function getDefaultData(){return{
-  wardrobe:[],outfitTemplates:[],dietPlans:[],calorieRecords:[],weightRecords:[],
+  wardrobe:[],outfitTemplates:[],dietPlans:[],calorieRecords:[],weightRecords:[],readingNotes:[],
   milkTeaHistory:[],milkTeaMenu:[
     // 喜茶
     {brand:'喜茶',name:'多肉葡萄',sweetness:'少糖',ice:'少冰',topping:'葡萄果肉'},
@@ -2653,9 +2682,11 @@ function deleteTravelPlan(id){if(confirm('删除？')){AppData.travelPlans=AppDa
 function renderProgress(){
   const area=document.getElementById('contentArea');
   const activeTab=currentModule==='progress'?currentSubTab:'countdown';
-  area.innerHTML=`<div class="tabs"><div class="tab ${activeTab==='countdown'?'active':''}" data-tab="countdown">⏰ 事项倒计时</div><div class="tab ${activeTab==='news'?'active':''}" data-tab="news">📰 时政热点</div></div><div id="progressContent"></div>`;
+  area.innerHTML=`<div class="tabs"><div class="tab ${activeTab==='countdown'?'active':''}" data-tab="countdown">⏰ 事项倒计时</div><div class="tab ${activeTab==='news'?'active':''}" data-tab="news">📰 时政热点</div><div class="tab ${activeTab==='reading'?'active':''}" data-tab="reading">📚 阅读记录</div></div><div id="progressContent"></div>`;
   area.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{currentSubTab=t.dataset.tab;renderProgress();});});
-  if(activeTab==='countdown')renderCountdowns();else renderNews();
+  if(activeTab==='countdown')renderCountdowns();
+  else if(activeTab==='reading')renderReading();
+  else renderNews();
 }
 function renderCountdowns(){
   const items=AppData.countdowns.sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
@@ -2676,6 +2707,120 @@ function editCountdown(id){
 }
 function togglePin(id){const item=AppData.countdowns.find(c=>c.id===id);if(item){item.pinned=!item.pinned;saveData(AppData);renderCountdowns();}}
 function deleteCountdown(id){if(confirm('删除？')){AppData.countdowns=AppData.countdowns.filter(c=>c.id!==id);saveData(AppData);renderCountdowns();showToast('已删除');}}
+
+// ==================== 阅读记录（便签） ====================
+let _readingKeyword='';
+let _readingExpanded=false;
+function renderReading(){
+  const container=document.getElementById('progressContent');
+  if(!container)return;
+  const active=AppData.readingNotes;
+  container.innerHTML=`
+    <div class="cute-card">
+      <div class="cute-card-header">
+        <span class="heart-icon">📚</span>
+        <span class="title-text">阅读记录</span>
+        <span class="badge-pill" id="readingBadge">${active.length}条</span>
+        <button class="btn btn-outline btn-sm" id="readingFoldBtn" style="margin-left:8px;display:none" onclick="toggleReadingExpanded()">展开全部 ▼</button>
+        <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="addReadingNote()">➕ 新增便签</button>
+      </div>
+      <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px;line-height:1.5;">记录每一次阅读感悟，便签会自动出现在开屏页，与你随机相见 💡</p>
+      <div class="rn-search"><input class="input" id="readingSearch" placeholder="🔍 按关键词 / 书名 / 作者筛选…" value="${escapeHtml(_readingKeyword)}" oninput="filterReadingNotes(this.value)"></div>
+      <div class="notes-grid" id="notesGrid"></div>
+    </div>
+  `;
+  renderReadingGrid();
+}
+function renderReadingGrid(){
+  const grid=document.getElementById('notesGrid');
+  if(!grid)return;
+  const kw=(_readingKeyword||'').trim().toLowerCase();
+  let list=AppData.readingNotes;
+  if(kw)list=list.filter(n=>(n.content||'').toLowerCase().includes(kw)||(n.source||'').toLowerCase().includes(kw));
+  list.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+  const total=list.length;
+  const showAll=(kw!=='')||_readingExpanded;
+  const shown=showAll?list:list.slice(0,3);
+  const badge=document.getElementById('readingBadge');if(badge)badge.textContent=total+'条';
+  const foldBtn=document.getElementById('readingFoldBtn');
+  if(foldBtn){
+    if(total>3&&kw===''){foldBtn.style.display='';foldBtn.textContent=_readingExpanded?'收起 ▲':'展开全部 ▼';}
+    else foldBtn.style.display='none';
+  }
+  if(shown.length){
+    grid.innerHTML=shown.map(n=>noteCard(n)).join('');
+  }else{
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📝</div><p>${kw?'没有匹配「'+escapeHtml(kw)+'」的便签~':'还没有阅读便签~<br>点「➕ 新增便签」记下今日感悟吧！'}</p></div>`;
+  }
+}
+function filterReadingNotes(kw){_readingKeyword=kw;renderReadingGrid();}
+function toggleReadingExpanded(){_readingExpanded=!_readingExpanded;renderReadingGrid();}
+function noteCard(n){
+  const src=(n.source||'').trim();
+  return `<div class="reading-note" onclick="toggleReadingCard(this)">
+    <div class="rn-pin">📌</div>
+    <div class="rn-text">${escapeHtml(n.content).replace(/\n/g,'<br>')}</div>
+    ${src?`<div class="rn-source">📚 ${escapeHtml(src)}</div>`:''}
+    <div class="rn-meta">📅 ${n.createdAt||''}<span class="rn-hint">👆 点击展开</span></div>
+    <div class="rn-actions">
+      <button class="btn btn-outline btn-xs" onclick="event.stopPropagation();editReadingNote('${n.id}')">✏️ 编辑</button>
+      <button class="btn btn-danger btn-xs" onclick="event.stopPropagation();deleteReadingNote('${n.id}')">🗑️ 删</button>
+    </div>
+  </div>`;
+}
+function toggleReadingCard(el){
+  // 同一时间只展开一张，避免误触
+  document.querySelectorAll('.reading-note.expanded').forEach(c=>{if(c!==el)c.classList.remove('expanded');});
+  el.classList.toggle('expanded');
+}
+function addReadingNote(){
+  showModal('📝 新增阅读便签',`<div class="form-group"><label>📖 阅读内容</label><textarea class="textarea" id="rnContent" rows="6" placeholder="记录今天的阅读感悟、摘抄或想法..."></textarea></div><div class="form-group"><label>✍️ 作者 / 书名（选填）</label><input class="input" id="rnSource" placeholder="如：余华《活着》"></div>`,(o)=>{
+    const c=o.querySelector('#rnContent').value.trim();
+    if(!c){showToast('内容不能为空','error');return false;}
+    const src=o.querySelector('#rnSource').value.trim();
+    AppData.readingNotes.push({id:genId(),content:c,source:src,archived:false,createdAt:today()});
+    _readingKeyword='';_readingExpanded=false;
+    saveData(AppData);renderReading();showToast('✨ 已添加');
+  });
+}
+function editReadingNote(id){
+  const n=AppData.readingNotes.find(x=>x.id===id);if(!n)return;
+  showModal('✏️ 编辑便签',`<div class="form-group"><label>📖 阅读内容</label><textarea class="textarea" id="ernContent" rows="6">${escapeHtml(n.content)}</textarea></div><div class="form-group"><label>✍️ 作者 / 书名（选填）</label><input class="input" id="ernSource" value="${escapeHtml(n.source||'')}" placeholder="如：余华《活着》"></div>`,(o)=>{
+    const c=o.querySelector('#ernContent').value.trim();
+    if(!c){showToast('内容不能为空','error');return false;}
+    n.content=c;n.source=o.querySelector('#ernSource').value.trim();saveData(AppData);renderReading();showToast('✨ 已更新');
+  });
+}
+function deleteReadingNote(id){if(confirm('确定删除这条便签？')){AppData.readingNotes=AppData.readingNotes.filter(x=>x.id!==id);saveData(AppData);renderReading();showToast('🗑️ 已删除');}}
+// 开屏页：随机抽取一条阅读便签
+function pickRandomReadingNote(){
+  const pool=AppData.readingNotes.filter(n=>n.content && n.content.trim());
+  if(pool.length===0)return null;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function showSplash(){
+  const note=pickRandomReadingNote();
+  const dateStr=getCnDate();
+  const bodyHtml=note
+    ? `<div class="splash-note-text">${escapeHtml(note.content).replace(/\n/g,'<br>')}</div>${note.source?`<div class="splash-note-meta">📚 ${escapeHtml(note.source)}</div>`:''}<div class="splash-note-meta">📅 ${note.createdAt||''} · 📚 阅读便签</div>`
+    : `<div class="splash-empty">💡 记得记录今日阅读内容。</div>`;
+  let s=document.getElementById('splashScreen');
+  if(!s){s=document.createElement('div');s.id='splashScreen';document.body.appendChild(s);}
+  s.innerHTML=`<div class="splash-inner">
+    <div class="splash-logo">💗</div>
+    <div class="splash-title">谭大米の工作台</div>
+    <div class="splash-date">${dateStr}</div>
+    <div class="splash-card">${bodyHtml}</div>
+    <button class="btn btn-primary splash-enter" onclick="closeSplash()">✨ 进入工作台</button>
+    <div class="splash-hint">每日一句阅读便签，与你随机相见</div>
+  </div>`;
+  s.style.display='flex';
+}
+function closeSplash(){
+  const s=document.getElementById('splashScreen');
+  if(s)s.style.display='none';
+  if(currentModule!=='wardrobe')switchModule('wardrobe');
+}
 
 function renderNews(){
   const items=AppData.newsItems.slice(0,10);
@@ -2844,7 +2989,7 @@ function deleteFin(id){AppData.incomeExpenses=AppData.incomeExpenses.filter(r=>r
 function init(){
   const def=getDefaultData();
   if(!AppData.retirePlan||typeof AppData.retirePlan!=='object')AppData.retirePlan=def.retirePlan;
-  ['incomeExpenses','wardrobe','outfitTemplates','dietPlans','calorieRecords','weightRecords','milkTeaMenu','milkTeaHistory','travelPlans','countdowns','newsItems'].forEach(k=>{if(!Array.isArray(AppData[k]))AppData[k]=def[k]||[];});
+  ['incomeExpenses','wardrobe','outfitTemplates','dietPlans','calorieRecords','weightRecords','readingNotes','milkTeaMenu','milkTeaHistory','travelPlans','countdowns','newsItems'].forEach(k=>{if(!Array.isArray(AppData[k]))AppData[k]=def[k]||[];});
   // 旧数据季节可能是字符串('春秋'/'夏')，统一转为 春/夏/秋/冬 数组，避免筛选器里出现不存在的值
   AppData.wardrobe.forEach(w=>{if(w&&w.season!==undefined)w.season=seasonToArr(w.season);});
   if(!AppData.milkTeaMenu||AppData.milkTeaMenu.length===0)AppData.milkTeaMenu=def.milkTeaMenu;
@@ -2890,10 +3035,10 @@ function init(){
     // 把本地 IndexedDB 中的图片补进云端，保证跨设备可显示
     await backfillCloudImages();
     document.getElementById('brandDate').textContent = getCnDate();
-    switchModule('wardrobe');
+    switchModule('wardrobe');showSplash();
   }).catch(() => {
     document.getElementById('brandDate').textContent = getCnDate();
-    switchModule('wardrobe');
+    switchModule('wardrobe');showSplash();
   });
 
   // 可见性恢复 → 同时拉取云端最新数据
